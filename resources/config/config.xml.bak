@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+      <dialog>
+        <evaluator>
+           <strategies>-->
+           
+             DiceOnlyStrategy : name; minimumScore
+             JaccardOnlyStrategy : name; minimumScore
+             OverlapOnlyStrategy : name; minimumScore
+             JaccardWithOverlapStrategy : name; weightFactor; minimumScore; minimumBigramScore
+             JaccardOverlapTfIdfStrategy : name; weightFactor; minimumScore; minimumBigramScore
+           -->
+       <strategy class="sss.dialog.strategy.JaccardWithOverlapStrategy" name="SubsBot" weightFactor="0.80" minimumScore="0.6" minimumBigramScore="0.6" />
+   </strategies>
+</evaluator>
+</dialog>
+
+<!--english or portuguese-->
+    <language>english</language>
+
+	<lucene>
+		<indexPath>./resources/luceneIndexes</indexPath>
+        <usePreviouslyCreatedIndex>true</usePreviouslyCreatedIndex>
+		<hitsPerQuery>100</hitsPerQuery>
+    </lucene>
+
+    <!--location of the corpora (check if it is  coherent with the chosen language)-->
+	<corpusPath>./resources/corpus/eng</corpusPath>
+	<logPath>./resources/log</logPath>
+
+	<noAnswerFoundMsg>I don't know</noAnswerFoundMsg>
+</config>
