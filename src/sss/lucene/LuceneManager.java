@@ -45,6 +45,7 @@ public class LuceneManager {
         TextAnalyzer textAnalyzer = new TextAnalyzer(this.ANALYZER_PROPERTIES);
         Lemmatizer lemmatizer = new Lemmatizer();
         String lemmatizedQuestion = lemmatizer.getLemmatizedString(textAnalyzer.analyze(question));
+        System.out.println(lemmatizedQuestion);
         System.out.println("AAAAAAAA");
         List<Document> luceneDocs = this.luceneAlgorithm.search(lemmatizedQuestion, this.configParser.getHitsPerQuery());
         System.out.println("BBBBBBBBBB");
