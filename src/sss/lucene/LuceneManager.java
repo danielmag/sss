@@ -64,7 +64,7 @@ public class LuceneManager {
             SimpleQA simpleQA = wholeDialog.getSimpleQA(dialogId);
             QA qa = new QA(simpleQA.getQuestion(), simpleQA.getAnswer(),
                     simpleQA.getLemmatizedQuestion(), simpleQA.getLemmatizedAnswer(),
-                    simpleQA.getQuestionSentences(), simpleQA.getAnswerSentences(),
+                    null, null,
                     simpleQA.getDiff());
             qas.add(qa);
         }
