@@ -1,18 +1,17 @@
 package sss.dialog;
 
-import edu.stanford.nlp.util.CoreMap;
-
 import java.io.Serializable;
-import java.util.List;
 
 public class SimpleQA implements Serializable {
+    private String previousQA;
     private String question;
     private String answer;
     private String lemmatizedQuestion;
     private String lemmatizedAnswer;
     private long diff;
 
-    public SimpleQA(String question, String answer, String lemmatizedQuestion, String lemmatizedAnswer, long diff) {
+    public SimpleQA(String previousQA, String question, String answer, String lemmatizedQuestion, String lemmatizedAnswer, long diff) {
+        this.previousQA = previousQA;
         this.question = question;
         this.answer = answer;
         this.lemmatizedAnswer = lemmatizedAnswer;
@@ -38,5 +37,9 @@ public class SimpleQA implements Serializable {
 
     public long getDiff() {
         return diff;
+    }
+
+    public String getPreviousQA() {
+        return previousQA;
     }
 }

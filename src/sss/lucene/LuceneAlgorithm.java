@@ -23,7 +23,6 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import sss.dialog.SimpleQA;
-import sss.dialog.WholeDialog;
 import sss.texttools.Lemmatizer;
 import sss.texttools.TextAnalyzer;
 
@@ -96,9 +95,8 @@ public class LuceneAlgorithm {
             System.out.println("Creating indexes for " + file.getName() + "...");
             BufferedReader reader = new BufferedReader(new FileReader(file.getCanonicalPath()));
             String line;
-            int dialogNumber = 0;
-            int previousDialogId = -1;
-            WholeDialog wholeDialog = new WholeDialog();
+            int qaNumber = 0;
+            int previousDialogId = 0;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().length() == 0) {
                     continue;
@@ -129,22 +127,18 @@ public class LuceneAlgorithm {
                 String lemmatizedQuestion = lemmatizer.getLemmatizedString(questionSentences);
 
                 //TODO: check if removing answers that end with a question mark might be useful...
-
+                SimpleQA simpleQA;
                 if (dialogId == previousDialogId + 1) {
-                    wholeDialog.addSimpleQA(new SimpleQA(question, answer, lemmatizedQuestion, lemmatizedAnswer, diff));
-                    if (dialogId > 0) {
-                        assert (wholeDialog.getSimpleQA(dialogId).getQuestion().trim().equals(wholeDialog.getSimpleQA(dialogId - 1).getAnswer().trim()));
-                    }
+                    simpleQA = new SimpleQA(String.valueOf(qaNumber - 1), question, answer, lemmatizedQuestion, lemmatizedAnswer, diff);
                 } else {
-                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-                            new FileOutputStream(dir.getCanonicalPath() + "/" + dialogNumber + ".ser"));
-                    objectOutputStream.writeObject(wholeDialog);
-                    wholeDialog = new WholeDialog();
-                    wholeDialog.addSimpleQA(new SimpleQA(question, answer, lemmatizedQuestion, lemmatizedAnswer, diff));
-                    dialogNumber++;
+                    simpleQA = new SimpleQA(null, question, answer, lemmatizedQuestion, lemmatizedAnswer, diff);
                 }
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                        new FileOutputStream(dir.getCanonicalPath() + "/" + qaNumber + ".ser"));
+                objectOutputStream.writeObject(simpleQA);
+                qaNumber++;
                 previousDialogId = dialogId;
-                addDoc(writer, lemmatizedQuestion, lemmatizedAnswer + DELIMITER + dialogNumber + DELIMITER + dialogId);
+                addDoc(writer, lemmatizedQuestion, String.valueOf(qaNumber));
             }
         }
         writer.close();

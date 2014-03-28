@@ -4,7 +4,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import sss.dialog.QA;
 import sss.dialog.SimpleQA;
-import sss.dialog.WholeDialog;
 import sss.dialog.evaluator.AnswerFrequency;
 import sss.dialog.evaluator.QaScorer;
 import sss.dialog.evaluator.SimilarityToUserQuestion;
@@ -35,14 +34,8 @@ public class LuceneManager {
         }
     }
 
-    private WholeDialog deserializeWholeDialog(String wholeDialogFile) throws IOException, ClassNotFoundException {
-        File dir = new File(LuceneManager.SERIALIZED_OBJECTS_LOCATION);
-        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(dir.getCanonicalPath() + "/" + wholeDialogFile + ".ser"));
-        return (WholeDialog) objectInputStream.readObject();
-    }
-
     public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
-        TextAnalyzer textAnalyzer = new TextAnalyzer(this.ANALYZER_PROPERTIES);
+        TextAnalyzer textAnalyzer = new TextAnalyzer(LuceneManager.ANALYZER_PROPERTIES);
         Lemmatizer lemmatizer = new Lemmatizer();
         String lemmatizedQuestion = lemmatizer.getLemmatizedString(textAnalyzer.analyze(question));
         System.out.println(lemmatizedQuestion);
@@ -61,19 +54,20 @@ public class LuceneManager {
     private List<QA> loadLuceneResults(List<Document> docList) throws IOException, ClassNotFoundException {
         List<QA> qas = new ArrayList<>();
         for (Document d : docList) {
-            String[] answerStrings = d.get("answer").split(LuceneAlgorithm.DELIMITER);
-            String wholeDialogFile = answerStrings[1];
-            int dialogId = Integer.parseInt(answerStrings[2]);
-
-            WholeDialog wholeDialog = deserializeWholeDialog(wholeDialogFile);
-            SimpleQA simpleQA = wholeDialog.getSimpleQA(dialogId);
+            String qaId = d.get("answer");
+            SimpleQA simpleQA = deserializeSimpleQA(qaId);
             QA qa = new QA(simpleQA.getQuestion(), simpleQA.getAnswer(),
                     simpleQA.getLemmatizedQuestion(), simpleQA.getLemmatizedAnswer(),
-                    null, null,
                     simpleQA.getDiff());
             qas.add(qa);
         }
         return qas;
+    }
+
+    private SimpleQA deserializeSimpleQA(String simpleQAFile) throws IOException, ClassNotFoundException {
+        File dir = new File(LuceneManager.SERIALIZED_OBJECTS_LOCATION);
+        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(dir.getCanonicalPath() + "/" + simpleQAFile + ".ser"));
+        return (SimpleQA) objectInputStream.readObject();
     }
 
     private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) {
@@ -89,7 +83,7 @@ public class LuceneManager {
 
     private QA getBestAnswer(String question, List<QA> scoredQas) {
         if (scoredQas.size() == 0 || scoredQas == null) {
-            return new QA(question, this.configParser.getNoAnswerFoundMsg(), "", "", null, null, 0);
+            return new QA(question, this.configParser.getNoAnswerFoundMsg(), "", "", 0);
         }
         double max = 0;
         QA bestQa = null;
