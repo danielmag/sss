@@ -45,9 +45,13 @@ public class LuceneManager {
         TextAnalyzer textAnalyzer = new TextAnalyzer(this.ANALYZER_PROPERTIES);
         Lemmatizer lemmatizer = new Lemmatizer();
         String lemmatizedQuestion = lemmatizer.getLemmatizedString(textAnalyzer.analyze(question));
+        System.out.println("AAAAAAAA");
         List<Document> luceneDocs = this.luceneAlgorithm.search(lemmatizedQuestion, this.configParser.getHitsPerQuery());
+        System.out.println("BBBBBBBBBB");
         List<QA> searchedResults = loadLuceneResults(luceneDocs);
+        System.out.println("CCCCCCCC");
         List<QA> scoredQas = scoreLuceneResults(lemmatizedQuestion, searchedResults);
+        System.out.println("DDDDDDDDD");
         QA answer = getBestAnswer(question, scoredQas);
         addGivenAnswer(answer);
         return answer.getAnswer();
