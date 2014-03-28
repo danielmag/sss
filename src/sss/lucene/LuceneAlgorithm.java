@@ -131,7 +131,7 @@ public class LuceneAlgorithm {
                 //TODO: check if removing answers that end with a question mark might be useful...
 
                 if (dialogId == previousDialogId + 1) {
-                    wholeDialog.addSimpleQA(new SimpleQA(question, answer, lemmatizedQuestion, lemmatizedAnswer, questionSentences, answerSentences, diff));
+                    wholeDialog.addSimpleQA(new SimpleQA(question, answer, lemmatizedQuestion, lemmatizedAnswer, diff));
                     if (dialogId > 0) {
                         assert (wholeDialog.getSimpleQA(dialogId).getQuestion().trim().equals(wholeDialog.getSimpleQA(dialogId - 1).getAnswer().trim()));
                     }
@@ -140,7 +140,7 @@ public class LuceneAlgorithm {
                             new FileOutputStream(dir.getCanonicalPath() + "/" + dialogNumber + ".ser"));
                     objectOutputStream.writeObject(wholeDialog);
                     wholeDialog = new WholeDialog();
-                    wholeDialog.addSimpleQA(new SimpleQA(question, answer, lemmatizedQuestion, lemmatizedAnswer, questionSentences, answerSentences, diff));
+                    wholeDialog.addSimpleQA(new SimpleQA(question, answer, lemmatizedQuestion, lemmatizedAnswer, diff));
                     dialogNumber++;
                 }
                 previousDialogId = dialogId;

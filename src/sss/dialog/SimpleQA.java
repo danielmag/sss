@@ -10,17 +10,13 @@ public class SimpleQA implements Serializable {
     private String answer;
     private String lemmatizedQuestion;
     private String lemmatizedAnswer;
-    private List<CoreMap> questionSentences;
-    private List<CoreMap> answerSentences;
     private long diff;
 
-    public SimpleQA(String question, String answer, String lemmatizedQuestion, String lemmatizedAnswer, List<CoreMap> questionSentences, List<CoreMap> answerSentences, long diff) {
+    public SimpleQA(String question, String answer, String lemmatizedQuestion, String lemmatizedAnswer, long diff) {
         this.question = question;
         this.answer = answer;
         this.lemmatizedAnswer = lemmatizedAnswer;
         this.lemmatizedQuestion = lemmatizedQuestion;
-        this.questionSentences = questionSentences;
-        this.answerSentences = answerSentences;
         this.diff = diff;
     }
 
@@ -38,14 +34,6 @@ public class SimpleQA implements Serializable {
 
     public String getLemmatizedAnswer() {
         return lemmatizedAnswer;
-    }
-
-    public List<CoreMap> getQuestionSentences() {
-        return questionSentences;
-    }
-
-    public List<CoreMap> getAnswerSentences() {
-        return answerSentences;
     }
 
     public long getDiff() {
