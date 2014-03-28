@@ -89,8 +89,8 @@ public class LuceneManager {
         double max = 0;
         QA bestQa = null;
         for (QA qa : scoredQas) {
-            System.out.println("Q - " + qa.getQuestion());
-            System.out.println("A - " + qa.getAnswer());
+            System.out.println("Q - " + qa.getQuestionLemmatized());
+            System.out.println("A - " + qa.getAnswerLemmatized());
             System.out.println("S - " + qa.getScore());
             System.out.println();
             if (qa.getScore() > max) {
