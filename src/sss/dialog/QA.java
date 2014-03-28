@@ -1,7 +1,6 @@
 package sss.dialog;
 
-import l2f.nlp.NormalizerSimple;
-import l2f.nlp.SimpleTokenizer;
+import edu.stanford.nlp.util.CoreMap;
 
 import java.util.*;
 
@@ -11,16 +10,20 @@ public class QA {
     private String question;
     private String answer;
     private long diff;
-    private String answerNormalized = null; //I am using null values to allow lazy initialization
-    private String questionNormalized = null;
-    private List<String> questionList = null;
-    private List<String> answerList = null;
-    private List<String> questionListNormalized = null;
-    private List<String> answerListNormalized = null;
+    private String questionLemmatized;
+    private String answerLemmatized;
+    private List<CoreMap> questionSentences;
+    private List<CoreMap> answerSentences;
+    private List<String> questionListLemmatized = null; //I am using null values to allow lazy initialization
+    private List<String> answerListLemmatized = null;
 
-    public QA(String q, String a, long diff) {
+    public QA(String q, String a, String questionLemmatized, String answerLemmatized, List<CoreMap> questionSentences, List<CoreMap> answerSentences, long diff) {
         this.question = q;
         this.answer = a;
+        this.questionLemmatized = questionLemmatized;
+        this.answerLemmatized = answerLemmatized;
+        this.questionSentences = questionSentences;
+        this.answerSentences = answerSentences;
         this.score = 0.0;
         this.diff = diff;
     }
@@ -45,22 +48,14 @@ public class QA {
         return diff;
     }
 
-    public String getAnswerNormalized() {
-        if (answerNormalized != null) {
-            return answerNormalized;
-        } else {
-            return answerNormalized = NormalizerSimple.normPunctLCaseDMarks(answer);
-        }
+    public String getAnswerLemmatized() {
+            return answerLemmatized;
     }
 
-    public String getQuestionNormalized() {
-        if (questionNormalized != null) {
-            return questionNormalized;
-        } else {
-            return questionNormalized = NormalizerSimple.normPunctLCaseDMarks(question);
-        }
+    public String getQuestionLemmatized() {
+            return questionLemmatized;
     }
-
+/*
     public List<String> getQuestionList() {
         if (questionList != null) {
             return questionList;
@@ -76,22 +71,22 @@ public class QA {
             return answerList = (new SimpleTokenizer()).tokenize(answer);
         }
     }
-
-    public List<String> getQuestionListNormalized() {
-        if (questionListNormalized != null) {
-            return questionListNormalized;
+*/
+    public List<String> getQuestionListLemmatized() {
+        if (questionListLemmatized != null) {
+            return questionListLemmatized;
         } else {
-            String questionNorm = getQuestionNormalized();
-            return questionListNormalized = (new SimpleTokenizer()).tokenize(questionNorm);
+            String questionLemma = getQuestionLemmatized();
+            return questionListLemmatized = Arrays.asList(questionLemma.split("\\s+"));
         }
     }
 
-    public List<String> getAnswerListNormalized() {
-        if (answerListNormalized != null) {
-            return answerListNormalized;
+    public List<String> getAnswerListLemmatized() {
+        if (answerListLemmatized != null) {
+            return answerListLemmatized;
         } else {
-            String answerNorm = getAnswerNormalized();
-            return answerListNormalized = (new SimpleTokenizer()).tokenize(answerNorm);
+            String answerLemma = getAnswerLemmatized();
+            return answerListLemmatized = Arrays.asList(answerLemma.split("\\s+"));
         }
     }
 }

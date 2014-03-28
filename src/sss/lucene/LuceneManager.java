@@ -1,6 +1,5 @@
 package sss.lucene;
 
-import l2f.nlp.NormalizerSimple;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import sss.dialog.QA;
@@ -11,6 +10,8 @@ import sss.dialog.evaluator.QaScorer;
 import sss.dialog.evaluator.SimilarityToUserQuestion;
 import sss.dialog.evaluator.SimpleTimeDifference;
 import sss.resources.ConfigParser;
+import sss.texttools.Lemmatizer;
+import sss.texttools.TextAnalyzer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -34,23 +35,6 @@ public class LuceneManager {
         }
     }
 
-    private List<QA> loadLuceneResults(List<Document> docList) throws IOException, ClassNotFoundException {
-        List<QA> qas = new ArrayList<>();
-        for (Document d : docList) {
-            String question = d.get("question");
-            String[] answerStrings = d.get("answer").split(LuceneAlgorithm.DELIMITER);
-            String answer = answerStrings[0];
-            String wholeDialogFile = answerStrings[1];
-            int dialogId = Integer.parseInt(answerStrings[2]);
-
-            WholeDialog wholeDialog = deserializeWholeDialog(wholeDialogFile);
-            SimpleQA simpleQA = wholeDialog.getSimpleQA(dialogId);
-            QA qa = new QA(question, answer, simpleQA.getDiff());
-            qas.add(qa);
-        }
-        return qas;
-    }
-
     private WholeDialog deserializeWholeDialog(String wholeDialogFile) throws IOException, ClassNotFoundException {
         File dir = new File(LuceneManager.SERIALIZED_OBJECTS_LOCATION);
         ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(dir.getCanonicalPath() + "/" + wholeDialogFile + ".ser"));
@@ -58,13 +42,33 @@ public class LuceneManager {
     }
 
     public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
-        String normQuestion = NormalizerSimple.normPunctLCaseDMarks(question);
-        List<Document> luceneDocs = this.luceneAlgorithm.search(normQuestion, this.configParser.getHitsPerQuery());
+        TextAnalyzer textAnalyzer = new TextAnalyzer(this.ANALYZER_PROPERTIES);
+        Lemmatizer lemmatizer = new Lemmatizer();
+        String lemmatizedQuestion = lemmatizer.getLemmatizedString(textAnalyzer.analyze(question));
+        List<Document> luceneDocs = this.luceneAlgorithm.search(lemmatizedQuestion, this.configParser.getHitsPerQuery());
         List<QA> searchedResults = loadLuceneResults(luceneDocs);
-        List<QA> scoredQas = scoreLuceneResults(normQuestion, searchedResults);
+        List<QA> scoredQas = scoreLuceneResults(lemmatizedQuestion, searchedResults);
         QA answer = getBestAnswer(question, scoredQas);
         addGivenAnswer(answer);
         return answer.getAnswer();
+    }
+
+    private List<QA> loadLuceneResults(List<Document> docList) throws IOException, ClassNotFoundException {
+        List<QA> qas = new ArrayList<>();
+        for (Document d : docList) {
+            String[] answerStrings = d.get("answer").split(LuceneAlgorithm.DELIMITER);
+            String wholeDialogFile = answerStrings[1];
+            int dialogId = Integer.parseInt(answerStrings[2]);
+
+            WholeDialog wholeDialog = deserializeWholeDialog(wholeDialogFile);
+            SimpleQA simpleQA = wholeDialog.getSimpleQA(dialogId);
+            QA qa = new QA(simpleQA.getQuestion(), simpleQA.getAnswer(),
+                    simpleQA.getLemmatizedQuestion(), simpleQA.getLemmatizedAnswer(),
+                    simpleQA.getQuestionSentences(), simpleQA.getAnswerSentences(),
+                    simpleQA.getDiff());
+            qas.add(qa);
+        }
+        return qas;
     }
 
     private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) {
@@ -80,7 +84,7 @@ public class LuceneManager {
 
     private QA getBestAnswer(String question, List<QA> scoredQas) {
         if (scoredQas.size() == 0 || scoredQas == null) {
-            return new QA(question, this.configParser.getNoAnswerFoundMsg(), 0);
+            return new QA(question, this.configParser.getNoAnswerFoundMsg(), "", "", null, null, 0);
         }
         double max = 0;
         QA bestQa = null;

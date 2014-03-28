@@ -1,7 +1,5 @@
 package sss.lucene;
 
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.StopFilter;
@@ -26,6 +24,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import sss.dialog.SimpleQA;
 import sss.dialog.WholeDialog;
+import sss.texttools.Lemmatizer;
 import sss.texttools.TextAnalyzer;
 
 import java.io.*;
@@ -87,6 +86,7 @@ public class LuceneAlgorithm {
         String question;
         String answer;
         TextAnalyzer textAnalyzer = new TextAnalyzer(LuceneManager.ANALYZER_PROPERTIES);
+        Lemmatizer lemmatizer = new Lemmatizer();
 
         File dir = new File(LuceneManager.SERIALIZED_OBJECTS_LOCATION);
         dir.mkdirs();
@@ -125,8 +125,8 @@ public class LuceneAlgorithm {
 
                 List<CoreMap> answerSentences = textAnalyzer.analyze(answer);
                 List<CoreMap> questionSentences = textAnalyzer.analyze(answer);
-                String lemmatizedAnswer = getLemmatizedString(answerSentences);
-                String lemmatizedQuestion = getLemmatizedString(questionSentences);
+                String lemmatizedAnswer = lemmatizer.getLemmatizedString(answerSentences);
+                String lemmatizedQuestion = lemmatizer.getLemmatizedString(questionSentences);
 
                 //TODO: check if removing answers that end with a question mark might be useful...
 
@@ -162,22 +162,6 @@ public class LuceneAlgorithm {
 
     private String getSubstringAfterHyphen(String temp) {
         return temp.substring(temp.indexOf('-') + 2, temp.length());
-    }
-
-    private String getLemmatizedString(List<CoreMap> sentences) {
-        String lemmatizedAnswer = "";
-        for (CoreMap sentence : sentences) {
-            // traversing the words in the current sentence
-            // a CoreLabel is a CoreMap with additional token-specific methods
-            for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-                String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
-                if (lemma.length() == 1 && !Character.isLetterOrDigit(lemma.charAt(0))) {
-                    continue;
-                }
-                lemmatizedAnswer += lemma + " ";
-            }
-        }
-        return lemmatizedAnswer;
     }
 
     public List<Document> search(String inputQuestion, int hitsPerPage) throws IOException, ParseException {

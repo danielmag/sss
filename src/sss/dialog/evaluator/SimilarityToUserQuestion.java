@@ -1,12 +1,10 @@
 package sss.dialog.evaluator;
 
-import l2f.evaluator.distance.algorithms.jaccard.JaccarOverlapAlgorithm;
 import l2f.evaluator.distance.algorithms.jaccard.JaccardAlgorithm;
-import l2f.evaluator.distance.algorithms.overlap.OverlapAlgorithm;
 import l2f.evaluator.distance.algorithms.set.intersection.RegularSetIntersection;
-import l2f.nlp.SimpleTokenizer;
 import sss.dialog.QA;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class SimilarityToUserQuestion extends QaScorer {
@@ -17,11 +15,10 @@ public class SimilarityToUserQuestion extends QaScorer {
 
     @Override
     public void score(String userQuestion, List<QA> qas) {
-        SimpleTokenizer simpleTokenizer = new SimpleTokenizer();
-        List<String> tokenizedQuestion = simpleTokenizer.tokenize(userQuestion);
+        List<String> tokenizedQuestion = Arrays.asList(userQuestion.split("\\s+"));
         for (QA qa : qas) {
             JaccardAlgorithm jaccardAlgorithm = new JaccardAlgorithm(new RegularSetIntersection());
-            double score = jaccardAlgorithm.distance(tokenizedQuestion, qa.getQuestionListNormalized());
+            double score = jaccardAlgorithm.distance(tokenizedQuestion, qa.getQuestionListLemmatized());
             qa.addScore(score*super.getWeight());
         }
     }

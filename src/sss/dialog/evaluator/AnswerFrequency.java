@@ -1,6 +1,5 @@
 package sss.dialog.evaluator;
 
-import l2f.evaluator.distance.algorithms.jaccard.JaccarOverlapAlgorithm;
 import l2f.evaluator.distance.algorithms.jaccard.JaccardAlgorithm;
 import l2f.evaluator.distance.algorithms.set.intersection.RegularSetIntersection;
 import sss.dialog.QA;
@@ -20,7 +19,7 @@ public class AnswerFrequency extends QaScorer {
                 QA qa1 = qas.get(i);
                 QA qa2 = qas.get(j);
                 JaccardAlgorithm jaccardAlgorithm = new JaccardAlgorithm(new RegularSetIntersection());
-                double score = jaccardAlgorithm.distance(qa1.getAnswerListNormalized(), qa2.getAnswerListNormalized());
+                double score = jaccardAlgorithm.distance(qa1.getAnswerListLemmatized(), qa2.getAnswerListLemmatized());
                 double qascore = (score/qas.size())*super.getWeight();
                 qa1.addScore(qascore);
                 qa2.addScore(qascore);
