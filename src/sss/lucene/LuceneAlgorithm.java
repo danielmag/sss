@@ -1,5 +1,7 @@
 package sss.lucene;
 
+import com.db4o.Db4oEmbedded;
+import com.db4o.ObjectContainer;
 import edu.stanford.nlp.util.CoreMap;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.StopFilter;
@@ -69,8 +71,6 @@ public class LuceneAlgorithm {
         }
     }
 
-
-    // 1. create the index
     private Directory createIndex(Analyzer analyzer, String indexDir, String corpusDir) throws IOException {
         File indexDirec = new File(indexDir);
         FSDirectory index = FSDirectory.open(indexDirec);
@@ -79,23 +79,21 @@ public class LuceneAlgorithm {
         IndexWriter writer = new IndexWriter(index, config);
         writer.deleteAll(); //delete previous lucene files
 
-        deleteAllSerializedObjects();
-
-        String id;
+        String subId;
         String question;
         String answer;
         TextAnalyzer textAnalyzer = new TextAnalyzer(LuceneManager.ANALYZER_PROPERTIES);
         Lemmatizer lemmatizer = new Lemmatizer();
 
-        File dir = new File(LuceneManager.SERIALIZED_OBJECTS_LOCATION);
-        dir.mkdirs();
+        ObjectContainer db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), LuceneManager.DB4OFILENAME);
+        long internalId = -1;
+
         File f = new File(corpusDir);
         File[] files = f.listFiles();
         for (File file : files) {
-            System.out.println("Creating indexes for " + file.getName() + "...");
+            System.out.println("Creating lucene indexes and database for " + file.getName() + "...");
             BufferedReader reader = new BufferedReader(new FileReader(file.getCanonicalPath()));
             String line;
-            int qaNumber = 0;
             int previousDialogId = 0;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().length() == 0) {
@@ -103,7 +101,7 @@ public class LuceneAlgorithm {
                 }
                 String temp = line;
                 assert (temp.startsWith("SubId"));
-                id = getSubstringAfterHyphen(temp);
+                subId = getSubstringAfterHyphen(temp);
                 temp = reader.readLine();
                 assert (temp.startsWith("DialogId"));
                 int dialogId = Integer.parseInt(getSubstringAfterHyphen(temp));
@@ -122,36 +120,27 @@ public class LuceneAlgorithm {
                 answer = answer.trim();
 
                 List<CoreMap> answerSentences = textAnalyzer.analyze(answer);
-                List<CoreMap> questionSentences = textAnalyzer.analyze(answer);
+                List<CoreMap> questionSentences = textAnalyzer.analyze(question);
                 String lemmatizedAnswer = lemmatizer.getLemmatizedString(answerSentences);
                 String lemmatizedQuestion = lemmatizer.getLemmatizedString(questionSentences);
 
                 //TODO: check if removing answers that end with a question mark might be useful...
                 SimpleQA simpleQA;
                 if (dialogId == previousDialogId + 1) {
-                    simpleQA = new SimpleQA(String.valueOf(qaNumber - 1), question, answer, lemmatizedQuestion, lemmatizedAnswer, diff);
+                    simpleQA = new SimpleQA(internalId, question, answer, lemmatizedQuestion, lemmatizedAnswer, questionSentences, answerSentences, diff);
                 } else {
-                    simpleQA = new SimpleQA(null, question, answer, lemmatizedQuestion, lemmatizedAnswer, diff);
+                    simpleQA = new SimpleQA(-1, question, answer, lemmatizedQuestion, lemmatizedAnswer, questionSentences, answerSentences, diff);
                 }
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-                        new FileOutputStream(dir.getCanonicalPath() + "/" + qaNumber + ".ser"));
-                objectOutputStream.writeObject(simpleQA);
-                qaNumber++;
+                db.store(simpleQA);
+                internalId = db.ext().getID(simpleQA);
                 previousDialogId = dialogId;
-                addDoc(writer, lemmatizedQuestion, String.valueOf(qaNumber));
+                addDoc(writer, lemmatizedQuestion, String.valueOf(internalId));
             }
+            System.out.println();
         }
         writer.close();
 
         return index;
-    }
-
-    private void deleteAllSerializedObjects() {
-        System.out.println("Cleaning old serialized objects...");
-        File dir = new File(LuceneManager.SERIALIZED_OBJECTS_LOCATION);
-        for (File file : dir.listFiles()) {
-            file.delete();
-        }
     }
 
     private String getSubstringAfterHyphen(String temp) {

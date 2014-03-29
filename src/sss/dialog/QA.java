@@ -18,11 +18,13 @@ public class QA {
     private List<String> questionListLemmatized = null; //I am using null values to allow lazy initialization
     private List<String> answerListLemmatized = null;
 
-    public QA(String q, String a, String questionLemmatized, String answerLemmatized, long diff) {
+    public QA(String q, String a, String questionLemmatized, String answerLemmatized, List<CoreMap> questionSentences, List<CoreMap> answerSentences, long diff) {
         this.question = q;
         this.answer = a;
         this.questionLemmatized = questionLemmatized;
         this.answerLemmatized = answerLemmatized;
+        this.questionSentences = questionSentences;
+        this.answerSentences = answerSentences;
         this.score = 0.0;
         this.diff = diff;
     }
@@ -55,23 +57,14 @@ public class QA {
         return questionLemmatized;
     }
 
-    /*
-        public List<String> getQuestionList() {
-            if (questionList != null) {
-                return questionList;
-            } else {
-                return questionList = (new SimpleTokenizer()).tokenize(question);
-            }
-        }
+    public List<CoreMap> getQuestionSentences() {
+        return questionSentences;
+    }
 
-        public List<String> getAnswerList() {
-            if (answerList != null) {
-                return answerList;
-            } else {
-                return answerList = (new SimpleTokenizer()).tokenize(answer);
-            }
-        }
-    */
+    public List<CoreMap> getAnswerSentences() {
+        return answerSentences;
+    }
+
     public List<String> getQuestionListLemmatized() {
         if (questionListLemmatized != null) {
             return questionListLemmatized;

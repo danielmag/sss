@@ -3,6 +3,7 @@ package sss.texttools;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
+import sss.lucene.LuceneManager;
 
 import java.util.List;
 
@@ -15,12 +16,17 @@ public class Lemmatizer {
             // a CoreLabel is a CoreMap with additional token-specific methods
             for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
                 String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
-                if (lemma.length() == 1 && !Character.isLetterOrDigit(lemma.charAt(0))) {
+                if (!lemma.matches("[\\p{L}]+")) {
                     continue;
                 }
                 lemmatizedAnswer += lemma + " ";
             }
         }
         return lemmatizedAnswer;
+    }
+
+    public String getLemmatizedString(String text) {
+        TextAnalyzer textAnalyzer = new TextAnalyzer(LuceneManager.ANALYZER_PROPERTIES);
+        return getLemmatizedString(textAnalyzer.analyze(text));
     }
 }

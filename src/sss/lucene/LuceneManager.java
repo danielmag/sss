@@ -1,5 +1,8 @@
 package sss.lucene;
 
+import com.db4o.Db4oEmbedded;
+import com.db4o.ObjectContainer;
+import com.db4o.query.Predicate;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import sss.dialog.QA;
@@ -10,15 +13,16 @@ import sss.dialog.evaluator.SimilarityToUserQuestion;
 import sss.dialog.evaluator.SimpleTimeDifference;
 import sss.resources.ConfigParser;
 import sss.texttools.Lemmatizer;
-import sss.texttools.TextAnalyzer;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LuceneManager {
-    protected static final String SERIALIZED_OBJECTS_LOCATION = "./resources/serializedObjects";
-    protected static final String ANALYZER_PROPERTIES = "tokenize, ssplit, pos, lemma";
+    public static final String ANALYZER_PROPERTIES = "tokenize, ssplit, pos, lemma";
+    protected static final String DB4OFILENAME = Paths.get("").toAbsolutePath().toString() + "db.db4o";
     private ConfigParser configParser;
     private LuceneAlgorithm luceneAlgorithm;
 
@@ -35,39 +39,38 @@ public class LuceneManager {
     }
 
     public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
-        TextAnalyzer textAnalyzer = new TextAnalyzer(LuceneManager.ANALYZER_PROPERTIES);
         Lemmatizer lemmatizer = new Lemmatizer();
-        String lemmatizedQuestion = lemmatizer.getLemmatizedString(textAnalyzer.analyze(question));
+        String lemmatizedQuestion = lemmatizer.getLemmatizedString(question);
         System.out.println(lemmatizedQuestion);
-        System.out.println("AAAAAAAA");
+        System.out.println("1");
         List<Document> luceneDocs = this.luceneAlgorithm.search(lemmatizedQuestion, this.configParser.getHitsPerQuery());
-        System.out.println("BBBBBBBBBB");
+        System.out.println("2");
         List<QA> searchedResults = loadLuceneResults(luceneDocs);
-        System.out.println("CCCCCCCC");
+        System.out.println("3");
         List<QA> scoredQas = scoreLuceneResults(lemmatizedQuestion, searchedResults);
-        System.out.println("DDDDDDDDD");
+        System.out.println("4");
         QA answer = getBestAnswer(question, scoredQas);
         addGivenAnswer(answer);
         return answer.getAnswer();
     }
 
-    private List<QA> loadLuceneResults(List<Document> docList) throws IOException, ClassNotFoundException {
+    private List<QA> loadLuceneResults(List<Document> docList) {
         List<QA> qas = new ArrayList<>();
         for (Document d : docList) {
             String qaId = d.get("answer");
-            SimpleQA simpleQA = deserializeSimpleQA(qaId);
+            SimpleQA simpleQA = getSimpleQA(Long.parseLong(qaId));
             QA qa = new QA(simpleQA.getQuestion(), simpleQA.getAnswer(),
                     simpleQA.getLemmatizedQuestion(), simpleQA.getLemmatizedAnswer(),
+                    simpleQA.getQuestionSentences(), simpleQA.getAnswerSentences(),
                     simpleQA.getDiff());
             qas.add(qa);
         }
         return qas;
     }
 
-    private SimpleQA deserializeSimpleQA(String simpleQAFile) throws IOException, ClassNotFoundException {
-        File dir = new File(LuceneManager.SERIALIZED_OBJECTS_LOCATION);
-        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(dir.getCanonicalPath() + "/" + simpleQAFile + ".ser"));
-        return (SimpleQA) objectInputStream.readObject();
+    private SimpleQA getSimpleQA(long qaId) {
+        ObjectContainer db = Db4oEmbedded.openFile(LuceneManager.DB4OFILENAME);
+        return db.ext().getByID(qaId);
     }
 
     private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) {
@@ -83,7 +86,7 @@ public class LuceneManager {
 
     private QA getBestAnswer(String question, List<QA> scoredQas) {
         if (scoredQas.size() == 0 || scoredQas == null) {
-            return new QA(question, this.configParser.getNoAnswerFoundMsg(), "", "", 0);
+            return new QA(question, this.configParser.getNoAnswerFoundMsg(), null, null, null, null, 0);
         }
         double max = 0;
         QA bestQa = null;
