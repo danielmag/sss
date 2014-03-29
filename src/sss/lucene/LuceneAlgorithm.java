@@ -2,6 +2,7 @@ package sss.lucene;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
+import com.db4o.config.EmbeddedConfiguration;
 import edu.stanford.nlp.util.CoreMap;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.StopFilter;
@@ -85,7 +86,9 @@ public class LuceneAlgorithm {
         TextAnalyzer textAnalyzer = new TextAnalyzer(LuceneManager.ANALYZER_PROPERTIES);
         Lemmatizer lemmatizer = new Lemmatizer();
 
-        ObjectContainer db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), LuceneManager.DB4OFILENAME);
+        EmbeddedConfiguration db4oConfig = Db4oEmbedded.newConfiguration();
+        db4oConfig.file().blockSize(8);
+        ObjectContainer db = Db4oEmbedded.openFile(db4oConfig, LuceneManager.DB4OFILENAME);
         long internalId = -1;
 
         File f = new File(corpusDir);

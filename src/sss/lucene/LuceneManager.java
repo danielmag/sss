@@ -22,7 +22,7 @@ import java.util.List;
 
 public class LuceneManager {
     public static final String ANALYZER_PROPERTIES = "tokenize, ssplit, pos, lemma";
-    protected static final String DB4OFILENAME = Paths.get("").toAbsolutePath().toString() + "db.db4o";
+    protected static final String DB4OFILENAME = Paths.get("").toAbsolutePath().toString() + "/db.db4o";
     private ConfigParser configParser;
     private LuceneAlgorithm luceneAlgorithm;
 
