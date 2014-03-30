@@ -70,7 +70,9 @@ public class LuceneManager {
     }
 
     private SimpleQA getSimpleQA(long qaId) {
-        return db.ext().getByID(qaId);
+        SimpleQA simpleQA = db.ext().getByID(qaId);
+        db.activate(simpleQA, 0);
+        return simpleQA;
     }
 
     private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) {

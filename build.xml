@@ -3,7 +3,7 @@
   <property name="src.dir" location="src"/>
   <property name="build.dir" location="build"/>
   <property name="lib.dir" location="lib" />
-  <property name="archive.filename" value="script-subtitlealignment" />
+  <property name="archive.filename" value="sss" />
   <property name="jar.filename" value="${archive.filename}.jar" />
   <property name="log4j.filename" value="log4j.properties" />
   
