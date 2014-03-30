@@ -17,8 +17,10 @@ public class Main {
             System.out.println("Say something: ");
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             try {
-                String querystr = br.readLine();
-                System.out.println("Answer: " + luceneManager.getAnswer(querystr));
+                String query = br.readLine();
+                String answer = luceneManager.getAnswer(query);
+                System.out.println("Question: " + query);
+                System.out.println("Answer: " + answer);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ParseException e) {

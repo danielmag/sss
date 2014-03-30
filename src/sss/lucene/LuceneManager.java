@@ -39,7 +39,7 @@ public class LuceneManager {
     }
 
     public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
-        String lemmatizedQuestion = this.lemmatizer.getLemmatizedString(question);
+        String lemmatizedQuestion = this.lemmatizer.getLemmatizedString(question).toLowerCase();
         System.out.println("Lemmatized question: " + lemmatizedQuestion);
         System.out.println("Retrieving Lucene results...");
         List<Document> luceneDocs = this.luceneAlgorithm.search(lemmatizedQuestion, this.configParser.getHitsPerQuery());

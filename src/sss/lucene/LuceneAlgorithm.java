@@ -29,12 +29,16 @@ import sss.dialog.SimpleQA;
 import sss.texttools.Lemmatizer;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class LuceneAlgorithm {
     private Analyzer analyzer;
@@ -100,7 +104,7 @@ public class LuceneAlgorithm {
             BufferedReader reader = new BufferedReader(new FileReader(file.getCanonicalPath()));
             String line;
             int previousDialogId = 0;
-            long totalLines = 34000000;/*countLines(file.toPath());*/
+            long totalLines = countLines(file.toPath());
             long lineNum = 0;
             while ((line = reader.readLine()) != null) {
                 lineNum++;
@@ -130,8 +134,8 @@ public class LuceneAlgorithm {
                 answer = getSubstringAfterHyphen(temp); //assumes the corpus does not have empty answers
                 answer = answer.trim();
 
-                String lemmatizedAnswer = this.lemmatizer.getLemmatizedString(answer);
-                String lemmatizedQuestion = this.lemmatizer.getLemmatizedString(question);
+                String lemmatizedAnswer = this.lemmatizer.getLemmatizedString(answer).toLowerCase();
+                String lemmatizedQuestion = this.lemmatizer.getLemmatizedString(question).toLowerCase();
 
                 //TODO: check if removing answers that end with a question mark might be useful...
                 SimpleQA simpleQA;
@@ -162,13 +166,12 @@ public class LuceneAlgorithm {
         return temp.substring(temp.indexOf('-') + 2, temp.length());
     }
 
-    /*
-        private long countLines(Path filePath) throws IOException {
-            try (Stream<String> lines = Files.lines(filePath, Charset.defaultCharset())) {
-                return lines.count();
-            }
+    private long countLines(Path filePath) throws IOException {
+        try (Stream<String> lines = Files.lines(filePath, Charset.defaultCharset())) {
+            return lines.count();
         }
-    */
+    }
+
     public List<Document> search(String inputQuestion, int hitsPerPage) throws IOException, ParseException {
         TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
         Query q = new QueryParser(Version.LUCENE_43, "question", this.analyzer).parse(inputQuestion);
@@ -180,7 +183,6 @@ public class LuceneAlgorithm {
             Document d = this.searcher.doc(docId);
             docList.add(d);
         }
-
         return docList;
     }
 

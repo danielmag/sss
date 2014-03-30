@@ -20,7 +20,7 @@
 
 	<lucene>
 		<indexPath>./resources/luceneIndexes</indexPath>
-        <usePreviouslyCreatedIndex>true</usePreviouslyCreatedIndex>
+        <usePreviouslyCreatedIndex>false</usePreviouslyCreatedIndex>
 		<hitsPerQuery>200</hitsPerQuery>
     </lucene>
 
@@ -28,5 +28,5 @@
 	<corpusPath>./resources/corpus/eng</corpusPath>
 	<logPath>./resources/log</logPath>
 
-	<noAnswerFoundMsg>I don't know</noAnswerFoundMsg>
+	<noAnswerFoundMsg>I'm sorry, could you rephrase that?</noAnswerFoundMsg>
 </config>
