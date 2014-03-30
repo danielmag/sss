@@ -3,7 +3,6 @@ package sss.lucene;
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.config.EmbeddedConfiguration;
-import edu.stanford.nlp.util.CoreMap;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
@@ -27,28 +26,19 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import sss.dialog.SimpleQA;
 import sss.texttools.Lemmatizer;
-import sss.texttools.TextAnalyzer;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 public class LuceneAlgorithm {
-
-    public static final String DELIMITER = " nuncamaisistoaparecenumalegenda "; //careful if you use characters that need to be escaped!
     private Analyzer analyzer;
     private Lemmatizer lemmatizer;
-
-    private Directory index = null;
+    private Directory index;
 
     public LuceneAlgorithm(String pathOfIndex, String pathOfCorpus, String language, Lemmatizer lemmatizer) {
         this.lemmatizer = lemmatizer;
@@ -105,11 +95,11 @@ public class LuceneAlgorithm {
             BufferedReader reader = new BufferedReader(new FileReader(file.getCanonicalPath()));
             String line;
             int previousDialogId = 0;
-            long totalLines = countLines(file.toPath());
+            long totalLines = 34000000;/*countLines(file.toPath());*/
             long lineNum = 0;
             while ((line = reader.readLine()) != null) {
                 lineNum++;
-                if ((lineNum%10000) == 0) {
+                if ((lineNum % 10000) == 0) {
                     System.out.println(getPercentage(lineNum, totalLines));
                 }
                 if (line.trim().length() == 0) {
@@ -160,19 +150,20 @@ public class LuceneAlgorithm {
     private String getPercentage(long partial, long total) {
         NumberFormat defaultFormat = NumberFormat.getPercentInstance();
         defaultFormat.setMinimumFractionDigits(1);
-        return defaultFormat.format(partial/(double)total);
+        return defaultFormat.format(partial / (double) total);
     }
 
     private String getSubstringAfterHyphen(String temp) {
         return temp.substring(temp.indexOf('-') + 2, temp.length());
     }
 
-    private long countLines(Path filePath) throws IOException {
-        try (Stream<String> lines = Files.lines(filePath, Charset.defaultCharset())) {
-            return lines.count();
+    /*
+        private long countLines(Path filePath) throws IOException {
+            try (Stream<String> lines = Files.lines(filePath, Charset.defaultCharset())) {
+                return lines.count();
+            }
         }
-    }
-
+    */
     public List<Document> search(String inputQuestion, int hitsPerPage) throws IOException, ParseException {
         Query q = new QueryParser(Version.LUCENE_43, "question", analyzer).parse(inputQuestion);
         IndexReader reader = DirectoryReader.open(index);

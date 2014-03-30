@@ -22,6 +22,7 @@ import java.util.List;
 public class LuceneManager {
     public static final String ANALYZER_PROPERTIES = "tokenize, ssplit, pos, lemma";
     protected static final String DB4OFILENAME = Paths.get("").toAbsolutePath().toString() + "/db.db4o";
+    private ObjectContainer db;
     private ConfigParser configParser;
     private LuceneAlgorithm luceneAlgorithm;
     private Lemmatizer lemmatizer;
@@ -32,11 +33,12 @@ public class LuceneManager {
         String language = this.configParser.getLanguage();
         this.lemmatizer = new Lemmatizer();
         if (configParser.isUsePreviouslyCreatedIndex()) {
-            luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, language, this.lemmatizer, lemmatizer);
+            luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, language, this.lemmatizer);
         } else {
             String pathOfCorpus = configParser.getCorpusPath();
             luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, pathOfCorpus, language, this.lemmatizer);
         }
+        this.db = Db4oEmbedded.openFile(LuceneManager.DB4OFILENAME);
     }
 
     public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
@@ -68,7 +70,6 @@ public class LuceneManager {
     }
 
     private SimpleQA getSimpleQA(long qaId) {
-        ObjectContainer db = Db4oEmbedded.openFile(LuceneManager.DB4OFILENAME);
         return db.ext().getByID(qaId);
     }
 
