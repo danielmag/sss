@@ -20,8 +20,8 @@
 
 	<lucene>
 		<indexPath>./resources/luceneIndexes</indexPath>
-        <usePreviouslyCreatedIndex>false</usePreviouslyCreatedIndex>
-		<hitsPerQuery>100</hitsPerQuery>
+        <usePreviouslyCreatedIndex>true</usePreviouslyCreatedIndex>
+		<hitsPerQuery>200</hitsPerQuery>
     </lucene>
 
     <!--location of the corpora (check if it is  coherent with the chosen language)-->

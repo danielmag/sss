@@ -7,9 +7,9 @@ import sss.dialog.QA;
 import java.util.Arrays;
 import java.util.List;
 
-public class SimilarityToUserQuestion extends QaScorer {
+public class AnswerSimilarityToUserQuestion extends QaScorer {
 
-    public SimilarityToUserQuestion(double weight) {
+    public AnswerSimilarityToUserQuestion(double weight) {
         super(weight);
     }
 
@@ -18,7 +18,7 @@ public class SimilarityToUserQuestion extends QaScorer {
         List<String> tokenizedQuestion = Arrays.asList(userQuestion.split("\\s+"));
         for (QA qa : qas) {
             JaccardAlgorithm jaccardAlgorithm = new JaccardAlgorithm(new RegularSetIntersection());
-            double score = jaccardAlgorithm.distance(tokenizedQuestion, qa.getQuestionListLemmatized());
+            double score = jaccardAlgorithm.distance(tokenizedQuestion, qa.getAnswerListLemmatized());
             qa.addScore(score*super.getWeight());
         }
     }

@@ -22,7 +22,8 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.MMapDirectory;
+import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import sss.dialog.SimpleQA;
 import sss.texttools.Lemmatizer;
@@ -39,28 +40,32 @@ public class LuceneAlgorithm {
     private Analyzer analyzer;
     private Lemmatizer lemmatizer;
     private Directory index;
+    private IndexSearcher searcher;
 
-    public LuceneAlgorithm(String pathOfIndex, String pathOfCorpus, String language, Lemmatizer lemmatizer) {
+    public LuceneAlgorithm(String pathOfIndex, String pathOfCorpus, String language, Lemmatizer lemmatizer) throws IOException {
         this.lemmatizer = lemmatizer;
         try {
             initAnalyzer(language);
-            index = createIndex(analyzer, pathOfIndex, pathOfCorpus);
+            this.index = createIndex(analyzer, pathOfIndex, pathOfCorpus);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        IndexReader reader = DirectoryReader.open(index);
+        this.searcher = new IndexSearcher(reader);
     }
 
-    public LuceneAlgorithm(String pathOfIndex, String language, Lemmatizer lemmatizer) {
+    public LuceneAlgorithm(String pathOfIndex, String language, Lemmatizer lemmatizer) throws IOException {
         this.lemmatizer = lemmatizer;
         File indexDirec = new File(pathOfIndex);
         System.out.println(pathOfIndex);
         try {
             initAnalyzer(language);
-            index = FSDirectory.open(indexDirec);
+            this.index = MMapDirectory.open(indexDirec);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        IndexReader reader = DirectoryReader.open(index);
+        this.searcher = new IndexSearcher(reader);
     }
 
     private void initAnalyzer(String language) {
@@ -73,7 +78,7 @@ public class LuceneAlgorithm {
 
     private Directory createIndex(Analyzer analyzer, String indexDir, String corpusDir) throws IOException {
         File indexDirec = new File(indexDir);
-        FSDirectory index = FSDirectory.open(indexDirec);
+        Directory index = MMapDirectory.open(indexDirec);
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_43, analyzer);
 
         IndexWriter writer = new IndexWriter(index, config);
@@ -165,16 +170,14 @@ public class LuceneAlgorithm {
         }
     */
     public List<Document> search(String inputQuestion, int hitsPerPage) throws IOException, ParseException {
-        Query q = new QueryParser(Version.LUCENE_43, "question", analyzer).parse(inputQuestion);
-        IndexReader reader = DirectoryReader.open(index);
-        IndexSearcher searcher = new IndexSearcher(reader);
         TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
-        searcher.search(q, collector);
+        Query q = new QueryParser(Version.LUCENE_43, "question", this.analyzer).parse(inputQuestion);
+        this.searcher.search(q, collector);
         ScoreDoc[] hits = collector.topDocs().scoreDocs;
         ArrayList<Document> docList = new ArrayList<>();
         for (ScoreDoc scoreDoc : hits) {
             int docId = scoreDoc.doc;
-            Document d = searcher.doc(docId);
+            Document d = this.searcher.doc(docId);
             docList.add(d);
         }
 

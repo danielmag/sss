@@ -6,10 +6,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import sss.dialog.QA;
 import sss.dialog.SimpleQA;
-import sss.dialog.evaluator.AnswerFrequency;
-import sss.dialog.evaluator.QaScorer;
-import sss.dialog.evaluator.SimilarityToUserQuestion;
-import sss.dialog.evaluator.SimpleTimeDifference;
+import sss.dialog.evaluator.*;
 import sss.resources.ConfigParser;
 import sss.texttools.Lemmatizer;
 
@@ -27,7 +24,7 @@ public class LuceneManager {
     private LuceneAlgorithm luceneAlgorithm;
     private Lemmatizer lemmatizer;
 
-    public LuceneManager() {
+    public LuceneManager() throws IOException {
         this.configParser = new ConfigParser("./resources/config/config.xml");
         String pathOfIndex = configParser.getLuceneIndexPath();
         String language = this.configParser.getLanguage();
@@ -43,16 +40,16 @@ public class LuceneManager {
 
     public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
         String lemmatizedQuestion = this.lemmatizer.getLemmatizedString(question);
-        System.out.println(lemmatizedQuestion);
-        System.out.println("1");
+        System.out.println("Lemmatized question: " + lemmatizedQuestion);
+        System.out.println("Retrieving Lucene results...");
         List<Document> luceneDocs = this.luceneAlgorithm.search(lemmatizedQuestion, this.configParser.getHitsPerQuery());
-        System.out.println("2");
+        System.out.println("Retrieving QA's from database...");
         List<QA> searchedResults = loadLuceneResults(luceneDocs);
-        System.out.println("3");
+        System.out.println("Scoring the QA's...");
         List<QA> scoredQas = scoreLuceneResults(lemmatizedQuestion, searchedResults);
-        System.out.println("4");
         QA answer = getBestAnswer(question, scoredQas);
         addGivenAnswer(answer);
+        System.out.println("Best answer score: " + answer.getScore());
         return answer.getAnswer();
     }
 
@@ -71,15 +68,16 @@ public class LuceneManager {
 
     private SimpleQA getSimpleQA(long qaId) {
         SimpleQA simpleQA = db.ext().getByID(qaId);
-        db.activate(simpleQA, 0);
+        db.activate(simpleQA, 1);
         return simpleQA;
     }
 
     private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) {
         List<QaScorer> qaScorers = new ArrayList<>();
-        qaScorers.add(new AnswerFrequency(0.4)); //TODO CONFIG!!!!!
-        qaScorers.add(new SimilarityToUserQuestion(0.5));
+        qaScorers.add(new AnswerFrequency(0.3)); //TODO CONFIG!!!!!
+        qaScorers.add(new QuestionSimilarityToUserQuestion(0.4));
         qaScorers.add(new SimpleTimeDifference(0.1));
+        qaScorers.add(new AnswerSimilarityToUserQuestion(0.2));
         for (QaScorer qaScorer : qaScorers) {
             qaScorer.score(question, searchedResults);
         }
