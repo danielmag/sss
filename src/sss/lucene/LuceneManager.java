@@ -2,7 +2,6 @@ package sss.lucene;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
-import com.db4o.query.Predicate;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import sss.dialog.QA;
@@ -25,22 +24,23 @@ public class LuceneManager {
     protected static final String DB4OFILENAME = Paths.get("").toAbsolutePath().toString() + "/db.db4o";
     private ConfigParser configParser;
     private LuceneAlgorithm luceneAlgorithm;
+    private Lemmatizer lemmatizer;
 
     public LuceneManager() {
         this.configParser = new ConfigParser("./resources/config/config.xml");
         String pathOfIndex = configParser.getLuceneIndexPath();
         String language = this.configParser.getLanguage();
+        this.lemmatizer = new Lemmatizer();
         if (configParser.isUsePreviouslyCreatedIndex()) {
-            luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, language);
+            luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, language, this.lemmatizer, lemmatizer);
         } else {
             String pathOfCorpus = configParser.getCorpusPath();
-            luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, pathOfCorpus, language);
+            luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, pathOfCorpus, language, this.lemmatizer);
         }
     }
 
     public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
-        Lemmatizer lemmatizer = new Lemmatizer();
-        String lemmatizedQuestion = lemmatizer.getLemmatizedString(question);
+        String lemmatizedQuestion = this.lemmatizer.getLemmatizedString(question);
         System.out.println(lemmatizedQuestion);
         System.out.println("1");
         List<Document> luceneDocs = this.luceneAlgorithm.search(lemmatizedQuestion, this.configParser.getHitsPerQuery());
@@ -61,7 +61,6 @@ public class LuceneManager {
             SimpleQA simpleQA = getSimpleQA(Long.parseLong(qaId));
             QA qa = new QA(simpleQA.getQuestion(), simpleQA.getAnswer(),
                     simpleQA.getLemmatizedQuestion(), simpleQA.getLemmatizedAnswer(),
-                    simpleQA.getQuestionSentences(), simpleQA.getAnswerSentences(),
                     simpleQA.getDiff());
             qas.add(qa);
         }
@@ -86,7 +85,7 @@ public class LuceneManager {
 
     private QA getBestAnswer(String question, List<QA> scoredQas) {
         if (scoredQas.size() == 0 || scoredQas == null) {
-            return new QA(question, this.configParser.getNoAnswerFoundMsg(), null, null, null, null, 0);
+            return new QA(question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
         }
         double max = 0;
         QA bestQa = null;

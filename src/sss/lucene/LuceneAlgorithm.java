@@ -30,20 +30,28 @@ import sss.texttools.Lemmatizer;
 import sss.texttools.TextAnalyzer;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class LuceneAlgorithm {
 
     public static final String DELIMITER = " nuncamaisistoaparecenumalegenda "; //careful if you use characters that need to be escaped!
     private Analyzer analyzer;
+    private Lemmatizer lemmatizer;
 
     private Directory index = null;
 
-    public LuceneAlgorithm(String pathOfIndex, String pathOfCorpus, String language) {
+    public LuceneAlgorithm(String pathOfIndex, String pathOfCorpus, String language, Lemmatizer lemmatizer) {
+        this.lemmatizer = lemmatizer;
         try {
             initAnalyzer(language);
             index = createIndex(analyzer, pathOfIndex, pathOfCorpus);
@@ -53,7 +61,8 @@ public class LuceneAlgorithm {
 
     }
 
-    public LuceneAlgorithm(String pathOfIndex, String language) {
+    public LuceneAlgorithm(String pathOfIndex, String language, Lemmatizer lemmatizer) {
+        this.lemmatizer = lemmatizer;
         File indexDirec = new File(pathOfIndex);
         System.out.println(pathOfIndex);
         try {
@@ -83,8 +92,6 @@ public class LuceneAlgorithm {
         String subId;
         String question;
         String answer;
-        TextAnalyzer textAnalyzer = new TextAnalyzer(LuceneManager.ANALYZER_PROPERTIES);
-        Lemmatizer lemmatizer = new Lemmatizer();
 
         EmbeddedConfiguration db4oConfig = Db4oEmbedded.newConfiguration();
         db4oConfig.file().blockSize(8);
@@ -98,11 +105,17 @@ public class LuceneAlgorithm {
             BufferedReader reader = new BufferedReader(new FileReader(file.getCanonicalPath()));
             String line;
             int previousDialogId = 0;
+            long totalLines = countLines(file.toPath());
+            long lineNum = 0;
             while ((line = reader.readLine()) != null) {
+                lineNum++;
+                if ((lineNum%10000) == 0) {
+                    System.out.println(getPercentage(lineNum, totalLines));
+                }
                 if (line.trim().length() == 0) {
                     continue;
                 }
-                String temp = line;
+                String temp = line; //TODO create neat class for this
                 assert (temp.startsWith("SubId"));
                 subId = getSubstringAfterHyphen(temp);
                 temp = reader.readLine();
@@ -122,17 +135,15 @@ public class LuceneAlgorithm {
                 answer = getSubstringAfterHyphen(temp); //assumes the corpus does not have empty answers
                 answer = answer.trim();
 
-                List<CoreMap> answerSentences = textAnalyzer.analyze(answer);
-                List<CoreMap> questionSentences = textAnalyzer.analyze(question);
-                String lemmatizedAnswer = lemmatizer.getLemmatizedString(answerSentences);
-                String lemmatizedQuestion = lemmatizer.getLemmatizedString(questionSentences);
+                String lemmatizedAnswer = this.lemmatizer.getLemmatizedString(answer);
+                String lemmatizedQuestion = this.lemmatizer.getLemmatizedString(question);
 
                 //TODO: check if removing answers that end with a question mark might be useful...
                 SimpleQA simpleQA;
                 if (dialogId == previousDialogId + 1) {
-                    simpleQA = new SimpleQA(internalId, question, answer, lemmatizedQuestion, lemmatizedAnswer, questionSentences, answerSentences, diff);
+                    simpleQA = new SimpleQA(internalId, question, answer, lemmatizedQuestion, lemmatizedAnswer, diff);
                 } else {
-                    simpleQA = new SimpleQA(-1, question, answer, lemmatizedQuestion, lemmatizedAnswer, questionSentences, answerSentences, diff);
+                    simpleQA = new SimpleQA(-1, question, answer, lemmatizedQuestion, lemmatizedAnswer, diff);
                 }
                 db.store(simpleQA);
                 internalId = db.ext().getID(simpleQA);
@@ -146,8 +157,20 @@ public class LuceneAlgorithm {
         return index;
     }
 
+    private String getPercentage(long partial, long total) {
+        NumberFormat defaultFormat = NumberFormat.getPercentInstance();
+        defaultFormat.setMinimumFractionDigits(1);
+        return defaultFormat.format(partial/(double)total);
+    }
+
     private String getSubstringAfterHyphen(String temp) {
         return temp.substring(temp.indexOf('-') + 2, temp.length());
+    }
+
+    private long countLines(Path filePath) throws IOException {
+        try (Stream<String> lines = Files.lines(filePath, Charset.defaultCharset())) {
+            return lines.count();
+        }
     }
 
     public List<Document> search(String inputQuestion, int hitsPerPage) throws IOException, ParseException {

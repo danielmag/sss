@@ -8,9 +8,14 @@ import sss.lucene.LuceneManager;
 import java.util.List;
 
 public class Lemmatizer {
+    TextAnalyzer textAnalyzer;
 
-    public String getLemmatizedString(List<CoreMap> sentences) {
-        String lemmatizedAnswer = "";
+    public Lemmatizer() {
+        this.textAnalyzer = new TextAnalyzer(LuceneManager.ANALYZER_PROPERTIES);
+    }
+
+    private String getLemmatizedString(List<CoreMap> sentences) {
+        StringBuilder lemmatizedAnswer = new StringBuilder();
         for (CoreMap sentence : sentences) {
             // traversing the words in the current sentence
             // a CoreLabel is a CoreMap with additional token-specific methods
@@ -19,14 +24,13 @@ public class Lemmatizer {
                 if (!lemma.matches("[\\p{L}]+")) {
                     continue;
                 }
-                lemmatizedAnswer += lemma + " ";
+                lemmatizedAnswer.append(lemma + " ");
             }
         }
-        return lemmatizedAnswer;
+        return lemmatizedAnswer.toString();
     }
 
     public String getLemmatizedString(String text) {
-        TextAnalyzer textAnalyzer = new TextAnalyzer(LuceneManager.ANALYZER_PROPERTIES);
-        return getLemmatizedString(textAnalyzer.analyze(text));
+        return getLemmatizedString(this.textAnalyzer.analyze(text));
     }
 }
