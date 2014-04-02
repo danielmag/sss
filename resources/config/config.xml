@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-      <!--<dialog>
-        <evaluator>
-           <strategies>-->
-           <!--
-             DiceOnlyStrategy : name; minimumScore
-             JaccardOnlyStrategy : name; minimumScore
-             OverlapOnlyStrategy : name; minimumScore
-             JaccardWithOverlapStrategy : name; weightFactor; minimumScore; minimumBigramScore
-             JaccardOverlapTfIdfStrategy : name; weightFactor; minimumScore; minimumBigramScore
-           -->
-       <!--<strategy class="sss.dialog.strategy.JaccardWithOverlapStrategy" name="SubsBot" weightFactor="0.80" minimumScore="0.6" minimumBigramScore="0.6" />
-   </strategies>
-</evaluator>
-</dialog>-->
+
+    <QaScorers>
+        <AnswerFrequency>35</AnswerFrequency>
+        <AnswerSimilarityToUserQuestion>15</AnswerSimilarityToUserQuestion>
+        <QuestionSimilarityToUserQuestion>40</QuestionSimilarityToUserQuestion>
+        <SimpleTimeDifference>10</SimpleTimeDifference>
+    </QaScorers>
 
 <!--english or portuguese-->
     <language>english</language>
 
 	<lucene>
 		<indexPath>./resources/luceneIndexes</indexPath>
-        <usePreviouslyCreatedIndex>false</usePreviouslyCreatedIndex>
+        <usePreviouslyCreatedIndex>true</usePreviouslyCreatedIndex>
 		<hitsPerQuery>200</hitsPerQuery>
     </lucene>
 

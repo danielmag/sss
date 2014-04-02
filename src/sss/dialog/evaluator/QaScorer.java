@@ -10,9 +10,6 @@ public abstract class QaScorer {
     private double weight; //has to be between 0 and 100
 
     protected QaScorer(double weight) {
-        if(weight < 0.0 || weight > 1.0) { //TODO: transfer to config parser
-            throw new WeightException();
-        }
         this.weight = weight;
     }
 

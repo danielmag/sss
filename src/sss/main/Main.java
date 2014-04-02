@@ -1,15 +1,18 @@
 package sss.main;
 
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.xml.sax.SAXException;
 import sss.lucene.LuceneManager;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ParserConfigurationException, XPathExpressionException, SAXException {
 
         LuceneManager luceneManager = new LuceneManager();
 

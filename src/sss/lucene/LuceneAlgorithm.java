@@ -152,7 +152,7 @@ public class LuceneAlgorithm {
             System.out.println();
         }
         writer.close();
-
+        db.close();
         return index;
     }
 

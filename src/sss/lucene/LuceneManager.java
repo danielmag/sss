@@ -4,12 +4,15 @@ import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.xml.sax.SAXException;
 import sss.dialog.QA;
 import sss.dialog.SimpleQA;
 import sss.dialog.evaluator.*;
 import sss.resources.ConfigParser;
 import sss.texttools.Lemmatizer;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -24,12 +27,12 @@ public class LuceneManager {
     private LuceneAlgorithm luceneAlgorithm;
     private Lemmatizer lemmatizer;
 
-    public LuceneManager() throws IOException {
+    public LuceneManager() throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
         this.configParser = new ConfigParser("./resources/config/config.xml");
         String pathOfIndex = configParser.getLuceneIndexPath();
         String language = this.configParser.getLanguage();
         this.lemmatizer = new Lemmatizer();
-        if (configParser.isUsePreviouslyCreatedIndex()) {
+        if (configParser.usePreviouslyCreatedIndex()) {
             luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, language, this.lemmatizer);
         } else {
             String pathOfCorpus = configParser.getCorpusPath();
@@ -40,7 +43,7 @@ public class LuceneManager {
 
     public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
         String lemmatizedQuestion = this.lemmatizer.getLemmatizedString(question).toLowerCase();
-        System.out.println("Lemmatized question: " + lemmatizedQuestion);
+        System.out.println("Lemmatized question: " + lemmatizedQuestion); //TODO debug
         System.out.println("Retrieving Lucene results...");
         List<Document> luceneDocs = this.luceneAlgorithm.search(lemmatizedQuestion, this.configParser.getHitsPerQuery());
         System.out.println("Retrieving QA's from database...");
@@ -73,11 +76,7 @@ public class LuceneManager {
     }
 
     private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) {
-        List<QaScorer> qaScorers = new ArrayList<>();
-        qaScorers.add(new AnswerFrequency(0.3)); //TODO CONFIG!!!!!
-        qaScorers.add(new QuestionSimilarityToUserQuestion(0.4));
-        qaScorers.add(new SimpleTimeDifference(0.1));
-        qaScorers.add(new AnswerSimilarityToUserQuestion(0.2));
+        List<QaScorer> qaScorers = (new QaScorerFactory().createQaScorers(this.configParser.getQaScorers()));
         for (QaScorer qaScorer : qaScorers) {
             qaScorer.score(question, searchedResults);
         }
