@@ -47,12 +47,14 @@ public class ConfigParser {
             Node item = nodeList.item(i);
             if (item.getNodeType() == Node.ELEMENT_NODE) {
                 Element eElement = (Element) item;
-                this.qaScorers.add(eElement.getNodeName() + "," + eElement.getTextContent());
-                int weight = Integer.parseInt(eElement.getTextContent());
-                if (weight < 0 || weight > 100) {
+                String name = eElement.getAttribute("name");
+                String weight = eElement.getAttribute("weight");
+                this.qaScorers.add(name + "," + weight);
+                int weightInt = Integer.parseInt(weight);
+                if (weightInt < 0 || weightInt > 100) {
                     throw new WeightException();
                 }
-                total += weight;
+                total += weightInt;
             }
         }
         if (total != 100) {

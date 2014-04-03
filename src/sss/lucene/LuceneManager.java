@@ -47,7 +47,7 @@ public class LuceneManager {
     }
 
     public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
-        String lemmatizedQuestion = this.normalizers.get(0).applyNormalizations(question, this.normalizers);
+        String lemmatizedQuestion = Normalizer.applyNormalizations(question, this.normalizers);
         System.out.println("Lemmatized question: " + lemmatizedQuestion); //TODO debug
         System.out.println("Retrieving Lucene results...");
         List<Document> luceneDocs = this.luceneAlgorithm.search(lemmatizedQuestion, this.configParser.getHitsPerQuery());
@@ -80,10 +80,18 @@ public class LuceneManager {
         return simpleQA;
     }
 
-    private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) {
+    private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) throws IOException {
         List<QaScorer> qaScorers = (new QaScorerFactory().createQaScorers(this.configParser.getQaScorers()));
         for (QaScorer qaScorer : qaScorers) {
-            qaScorer.score(question, searchedResults);
+            if (qaScorer instanceof AnswerSimilarityToUserQuestion) { // SO UGLY!!!!
+                ((AnswerSimilarityToUserQuestion) qaScorer).scoreWithoutStopWords(
+                        question,
+                        searchedResults,
+                        configParser.getStopWordsLocation(),
+                        this.normalizers);
+            } else {
+                qaScorer.score(question, searchedResults);
+            }
         }
         return searchedResults;
     }

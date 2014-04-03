@@ -2,10 +2,22 @@
 <config>
 
     <QaScorers>
-        <AnswerFrequency>35</AnswerFrequency>
-        <AnswerSimilarityToUserQuestion>15</AnswerSimilarityToUserQuestion>
-        <QuestionSimilarityToUserQuestion>40</QuestionSimilarityToUserQuestion>
-        <SimpleTimeDifference>10</SimpleTimeDifference>
+        <QaScorer
+                name="AnswerFrequency"
+                weight="30">
+        </QaScorer>
+        <QaScorer
+                name="AnswerSimilarityToUserQuestion"
+                weight="20">
+        </QaScorer>
+        <QaScorer
+                name="QuestionSimilarityToUserQuestion"
+                weight="40">
+        </QaScorer>
+        <QaScorer
+                name="SimpleTimeDifference"
+                weight="35">
+        </QaScorer>
     </QaScorers>
 
 <!--english or portuguese-->

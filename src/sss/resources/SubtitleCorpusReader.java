@@ -60,8 +60,8 @@ public class SubtitleCorpusReader extends CorpusReader {
                 answer = getSubstringAfterHyphen(temp); //assumes the corpus does not have empty answers
                 answer = answer.trim();
 
-                String normalizedAnswer = normalizers.get(0).applyNormalizations(answer, normalizers);
-                String normalizedQuestion = normalizers.get(0).applyNormalizations(answer, normalizers);
+                String normalizedAnswer = Normalizer.applyNormalizations(answer, normalizers);
+                String normalizedQuestion = Normalizer.applyNormalizations(answer, normalizers);
 
                 SimpleQA simpleQA;
                 if (dialogId == previousDialogId + 1) {
