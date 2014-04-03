@@ -20,11 +20,11 @@ public class SimpleTimeDifference extends QaScorer {
             if (diff == 0) {
                 score = 1;
             } else if (diff <= 80) {
-                score = 0.2;
+                score = 0.3;
             } else if (diff <= 1000)  {
-                score = 1 - (diff/5000.0); // ranges from approximately 0.9838 to 0.8
+                score = 0.9 - (diff/5000.0); // ranges from approximately 0.8838 to 0.7
             } else {
-                score = 0.8 - (diff/2500.0); // ranges from 0.8 to 0
+                score = 0.7 - (diff/2500.0); // ranges from 0.8 to 0
                 if (score < 0) {
                     score = 0;
                 }

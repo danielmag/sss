@@ -18,7 +18,7 @@ public class QuestionSimilarityToUserQuestion extends QaScorer {
         List<String> tokenizedQuestion = Arrays.asList(userQuestion.split("\\s+"));
         for (QA qa : qas) {
             JaccardAlgorithm jaccardAlgorithm = new JaccardAlgorithm(new RegularSetIntersection());
-            double score = jaccardAlgorithm.distance(tokenizedQuestion, qa.getQuestionListLemmatized());
+            double score = jaccardAlgorithm.distance(tokenizedQuestion, qa.getQuestionListNormalized());
             qa.addScore(score*super.getWeight());
         }
     }

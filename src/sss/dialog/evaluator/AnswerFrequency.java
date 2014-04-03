@@ -20,7 +20,7 @@ public class AnswerFrequency extends QaScorer {
                 QA qa1 = qas.get(i);
                 QA qa2 = qas.get(j);
                 JaccardAlgorithm jaccardAlgorithm = new JaccardAlgorithm(new RegularSetIntersection());
-                double score = jaccardAlgorithm.distance(qa1.getAnswerListLemmatized(), qa2.getAnswerListLemmatized());
+                double score = jaccardAlgorithm.distance(qa1.getAnswerListNormalized(), qa2.getAnswerListNormalized());
                 scores[i] += score;
                 scores[j] += score;
             }

@@ -1,16 +1,17 @@
-package sss.texttools;
+package sss.texttools.normalizer;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
 import sss.lucene.LuceneManager;
+import sss.texttools.TextAnalyzer;
 
 import java.util.List;
 
-public class Lemmatizer {
+public class EnglishLemmatizer extends Normalizer {
     TextAnalyzer textAnalyzer;
 
-    public Lemmatizer() {
+    public EnglishLemmatizer() {
         this.textAnalyzer = new TextAnalyzer(LuceneManager.ANALYZER_PROPERTIES);
     }
 
@@ -30,7 +31,7 @@ public class Lemmatizer {
         return lemmatizedAnswer.toString();
     }
 
-    public String getLemmatizedString(String text) {
+    public String normalize(String text) {
         return getLemmatizedString(this.textAnalyzer.analyze(text));
     }
 }

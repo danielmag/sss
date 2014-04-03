@@ -9,7 +9,9 @@ import sss.dialog.QA;
 import sss.dialog.SimpleQA;
 import sss.dialog.evaluator.*;
 import sss.resources.ConfigParser;
-import sss.texttools.Lemmatizer;
+import sss.texttools.normalizer.EnglishLemmatizer;
+import sss.texttools.normalizer.Normalizer;
+import sss.texttools.normalizer.SimpleNormalizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -25,24 +27,27 @@ public class LuceneManager {
     private ObjectContainer db;
     private ConfigParser configParser;
     private LuceneAlgorithm luceneAlgorithm;
-    private Lemmatizer lemmatizer;
+    private List<Normalizer> normalizers;
 
     public LuceneManager() throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
         this.configParser = new ConfigParser("./resources/config/config.xml");
         String pathOfIndex = configParser.getLuceneIndexPath();
         String language = this.configParser.getLanguage();
-        this.lemmatizer = new Lemmatizer();
+        List<Normalizer> normalizers = new ArrayList<>();
+        normalizers.add(new EnglishLemmatizer()); //TODO config
+        normalizers.add(new SimpleNormalizer());
+        this.normalizers = normalizers;
         if (configParser.usePreviouslyCreatedIndex()) {
-            luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, language, this.lemmatizer);
+            luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, language, normalizers);
         } else {
             String pathOfCorpus = configParser.getCorpusPath();
-            luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, pathOfCorpus, language, this.lemmatizer);
+            luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, pathOfCorpus, language, normalizers);
         }
         this.db = Db4oEmbedded.openFile(LuceneManager.DB4OFILENAME);
     }
 
     public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
-        String lemmatizedQuestion = this.lemmatizer.getLemmatizedString(question).toLowerCase();
+        String lemmatizedQuestion = this.normalizers.get(0).applyNormalizations(question, this.normalizers);
         System.out.println("Lemmatized question: " + lemmatizedQuestion); //TODO debug
         System.out.println("Retrieving Lucene results...");
         List<Document> luceneDocs = this.luceneAlgorithm.search(lemmatizedQuestion, this.configParser.getHitsPerQuery());
@@ -62,7 +67,7 @@ public class LuceneManager {
             String qaId = d.get("answer");
             SimpleQA simpleQA = getSimpleQA(Long.parseLong(qaId));
             QA qa = new QA(simpleQA.getQuestion(), simpleQA.getAnswer(),
-                    simpleQA.getLemmatizedQuestion(), simpleQA.getLemmatizedAnswer(),
+                    simpleQA.getNormalizedQuestion(), simpleQA.getNormalizedAnswer(),
                     simpleQA.getDiff());
             qas.add(qa);
         }
@@ -90,8 +95,8 @@ public class LuceneManager {
         double max = 0;
         QA bestQa = null;
         for (QA qa : scoredQas) {
-            System.out.println("Q - " + qa.getQuestionLemmatized());
-            System.out.println("A - " + qa.getAnswerLemmatized());
+            System.out.println("Q - " + qa.getQuestionNormalized());
+            System.out.println("A - " + qa.getAnswerNormalized());
             System.out.println("S - " + qa.getScore());
             System.out.println();
             if (qa.getScore() > max) {

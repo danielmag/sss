@@ -1,7 +1,5 @@
 package sss.dialog;
 
-import edu.stanford.nlp.util.CoreMap;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,16 +9,16 @@ public class QA {
     private String question;
     private String answer;
     private long diff;
-    private String questionLemmatized;
-    private String answerLemmatized;
-    private List<String> questionListLemmatized = null; //I am using null values to allow lazy initialization
-    private List<String> answerListLemmatized = null;
+    private String questionNormalized;
+    private String answerNormalized;
+    private List<String> questionListNormalized = null; //I am using null values to allow lazy initialization
+    private List<String> answerListNormalized = null;
 
-    public QA(String q, String a, String questionLemmatized, String answerLemmatized, long diff) {
+    public QA(String q, String a, String questionNormalized, String answerNormalized, long diff) {
         this.question = q;
         this.answer = a;
-        this.questionLemmatized = questionLemmatized;
-        this.answerLemmatized = answerLemmatized;
+        this.questionNormalized = questionNormalized;
+        this.answerNormalized = answerNormalized;
         this.score = 0.0;
         this.diff = diff;
     }
@@ -45,29 +43,29 @@ public class QA {
         return diff;
     }
 
-    public String getAnswerLemmatized() {
-        return answerLemmatized;
+    public String getAnswerNormalized() {
+        return answerNormalized;
     }
 
-    public String getQuestionLemmatized() {
-        return questionLemmatized;
+    public String getQuestionNormalized() {
+        return questionNormalized;
     }
 
-    public List<String> getQuestionListLemmatized() {
-        if (questionListLemmatized != null) {
-            return questionListLemmatized;
+    public List<String> getQuestionListNormalized() {
+        if (questionListNormalized != null) {
+            return questionListNormalized;
         } else {
-            String questionLemma = getQuestionLemmatized();
-            return questionListLemmatized = Arrays.asList(questionLemma.split("\\s+"));
+            String questionLemma = getQuestionNormalized();
+            return questionListNormalized = Arrays.asList(questionLemma.split("\\s+"));
         }
     }
 
-    public List<String> getAnswerListLemmatized() {
-        if (answerListLemmatized != null) {
-            return answerListLemmatized;
+    public List<String> getAnswerListNormalized() {
+        if (answerListNormalized != null) {
+            return answerListNormalized;
         } else {
-            String answerLemma = getAnswerLemmatized();
-            return answerListLemmatized = Arrays.asList(answerLemma.split("\\s+"));
+            String answerLemma = getAnswerNormalized();
+            return answerListNormalized = Arrays.asList(answerLemma.split("\\s+"));
         }
     }
 }

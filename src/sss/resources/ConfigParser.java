@@ -19,6 +19,7 @@ public class ConfigParser {
 
     private List<String> qaScorers;
     private String language;
+    private String stopWordsLocation;
     private String corpusPath;
     private String luceneIndexPath;
     private int hitsPerQuery;
@@ -70,6 +71,10 @@ public class ConfigParser {
         node = (Node) expr.evaluate(doc, XPathConstants.NODE);
         language = node.getTextContent();
 
+        expr = xpath.compile("//config/stopWordsLocation");
+        node = (Node) expr.evaluate(doc, XPathConstants.NODE);
+        stopWordsLocation = node.getTextContent();
+
         expr = xpath.compile("//config/lucene/indexPath");
         node = (Node) expr.evaluate(doc, XPathConstants.NODE);
         luceneIndexPath = node.getTextContent() + "/" + language;
@@ -94,6 +99,10 @@ public class ConfigParser {
 
     public String getLanguage() {
         return language;
+    }
+
+    public String getStopWordsLocation() {
+        return stopWordsLocation;
     }
 
     public String getCorpusPath() {

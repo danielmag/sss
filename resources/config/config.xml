@@ -10,6 +10,7 @@
 
 <!--english or portuguese-->
     <language>english</language>
+    <stopWordsLocation>./resources/stopwords/english_stop.txt</stopWordsLocation>
 
 	<lucene>
 		<indexPath>./resources/luceneIndexes</indexPath>
