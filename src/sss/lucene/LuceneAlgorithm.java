@@ -7,8 +7,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -28,13 +26,8 @@ import sss.texttools.normalizer.Normalizer;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class LuceneAlgorithm {
     private Analyzer analyzer;

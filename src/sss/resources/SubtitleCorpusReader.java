@@ -61,7 +61,7 @@ public class SubtitleCorpusReader extends CorpusReader {
                 answer = answer.trim();
 
                 String normalizedAnswer = Normalizer.applyNormalizations(answer, normalizers);
-                String normalizedQuestion = Normalizer.applyNormalizations(answer, normalizers);
+                String normalizedQuestion = Normalizer.applyNormalizations(question, normalizers);
 
                 SimpleQA simpleQA;
                 if (dialogId == previousDialogId + 1) {
