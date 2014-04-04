@@ -77,6 +77,9 @@ public class LuceneAlgorithm {
         IndexWriter writer = new IndexWriter(index, config);
         writer.deleteAll(); //delete previous lucene files
 
+        File dbFile = new File(LuceneManager.DB4OFILENAME);
+        dbFile.delete();
+
         EmbeddedConfiguration db4oConfig = Db4oEmbedded.newConfiguration();
         db4oConfig.file().blockSize(8);
         ObjectContainer db = Db4oEmbedded.openFile(db4oConfig, LuceneManager.DB4OFILENAME);
