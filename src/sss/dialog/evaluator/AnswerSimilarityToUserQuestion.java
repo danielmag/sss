@@ -11,19 +11,23 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AnswerSimilarityToUserQuestion extends QaScorer {
+    private String stopWordsLocation;
+    private List<Normalizer> normalizers;
 
-    public AnswerSimilarityToUserQuestion(double weight) {
+    public AnswerSimilarityToUserQuestion(double weight, String stopWordsLocation, List<Normalizer> normalizers) {
         super(weight);
+        this.stopWordsLocation = stopWordsLocation;
+        this.normalizers = normalizers;
     }
 
     @Override
     public void score(String userQuestion, List<QA> qas) {
-        List<String> tokenizedQuestion = Arrays.asList(userQuestion.split("\\s+"));
-        this.score(tokenizedQuestion, qas);
-    }
-
-    public void scoreWithoutStopWords(String userQuestion, List<QA> qas, String stopWordsLocation, List<Normalizer> normalizers) throws IOException {
-        StopWords stopWords = new StopWords(stopWordsLocation, normalizers);
+        StopWords stopWords = null;
+        try {
+            stopWords = new StopWords(this.stopWordsLocation, this.normalizers);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         List<String> tokenizedQuestion = Arrays.asList(userQuestion.split("\\s+"));
         List<String> tokenizedQuestionWithoutStopWords = stopWords.getStringListWithoutStopWords(tokenizedQuestion);
         if (!tokenizedQuestionWithoutStopWords.isEmpty()) {

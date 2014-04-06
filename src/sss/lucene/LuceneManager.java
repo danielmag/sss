@@ -28,6 +28,7 @@ public class LuceneManager {
     private ConfigParser configParser;
     private LuceneAlgorithm luceneAlgorithm;
     private List<Normalizer> normalizers;
+    private List<QaScorer> qaScorers;
 
     public LuceneManager() throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
         this.configParser = new ConfigParser("./resources/config/config.xml");
@@ -37,6 +38,9 @@ public class LuceneManager {
         normalizers.add(new EnglishLemmatizer()); //TODO config
         normalizers.add(new SimpleNormalizer());
         this.normalizers = normalizers;
+        this.qaScorers = (new QaScorerFactory().createQaScorers(this.configParser.getQaScorers(),
+                this.configParser.getStopWordsLocation(),
+                this.normalizers));
         if (configParser.usePreviouslyCreatedIndex()) {
             luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, language, normalizers);
         } else {
@@ -47,14 +51,14 @@ public class LuceneManager {
     }
 
     public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
-        String lemmatizedQuestion = Normalizer.applyNormalizations(question, this.normalizers);
-        System.out.println("Lemmatized question: " + lemmatizedQuestion); //TODO debug
+        String normalizedQuestion = Normalizer.applyNormalizations(question, this.normalizers);
+        System.out.println("Normalized question: " + normalizedQuestion); //TODO debug
         System.out.println("Retrieving Lucene results...");
-        List<Document> luceneDocs = this.luceneAlgorithm.search(lemmatizedQuestion, this.configParser.getHitsPerQuery());
+        List<Document> luceneDocs = this.luceneAlgorithm.search(normalizedQuestion, this.configParser.getHitsPerQuery());
         System.out.println("Retrieving QA's from database...");
         List<QA> searchedResults = loadLuceneResults(luceneDocs);
         System.out.println("Scoring the QA's...");
-        List<QA> scoredQas = scoreLuceneResults(lemmatizedQuestion, searchedResults);
+        List<QA> scoredQas = scoreLuceneResults(normalizedQuestion, searchedResults);
         QA answer = getBestAnswer(question, scoredQas);
         addGivenAnswer(answer);
         System.out.println("Best answer score: " + answer.getScore());
@@ -75,23 +79,14 @@ public class LuceneManager {
     }
 
     private SimpleQA getSimpleQA(long qaId) {
-        SimpleQA simpleQA = db.ext().getByID(qaId);
+        SimpleQA simpleQA = this.db.ext().getByID(qaId);
         db.activate(simpleQA, 1);
         return simpleQA;
     }
 
     private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) throws IOException {
-        List<QaScorer> qaScorers = (new QaScorerFactory().createQaScorers(this.configParser.getQaScorers()));
-        for (QaScorer qaScorer : qaScorers) {
-            if (qaScorer instanceof AnswerSimilarityToUserQuestion) { // SO UGLY!!!!
-                ((AnswerSimilarityToUserQuestion) qaScorer).scoreWithoutStopWords(
-                        question,
-                        searchedResults,
-                        configParser.getStopWordsLocation(),
-                        this.normalizers);
-            } else {
-                qaScorer.score(question, searchedResults);
-            }
+        for (QaScorer qaScorer : this.qaScorers) {
+            qaScorer.score(question, searchedResults);
         }
         return searchedResults;
     }
@@ -103,8 +98,8 @@ public class LuceneManager {
         double max = 0;
         QA bestQa = null;
         for (QA qa : scoredQas) {
-            System.out.println("Q - " + qa.getQuestionNormalized());
-            System.out.println("A - " + qa.getAnswerNormalized());
+            System.out.println("I - " + qa.getQuestion());
+            System.out.println("R - " + qa.getAnswer());
             System.out.println("S - " + qa.getScore());
             System.out.println();
             if (qa.getScore() > max) {
@@ -115,7 +110,7 @@ public class LuceneManager {
         return bestQa;
     }
 
-    private void addGivenAnswer(QA qa) {
+    private void addGivenAnswer(QA qa) { //TODO add date and time
         try {
             FileWriter x = new FileWriter(this.configParser.getLogPath(), true);
             x.write("Q - " + qa.getQuestion() + "\t" + "A - " + qa.getAnswer() + "\n");

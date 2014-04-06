@@ -82,6 +82,8 @@ public class LuceneAlgorithm {
 
         EmbeddedConfiguration db4oConfig = Db4oEmbedded.newConfiguration();
         db4oConfig.file().blockSize(8);
+        db4oConfig.file().readOnly(true);
+        db4oConfig.file().lockDatabaseFile(false);
         ObjectContainer db = Db4oEmbedded.openFile(db4oConfig, LuceneManager.DB4OFILENAME);
 
         File f = new File(corpusDir);
