@@ -1,24 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 
-    <QaScorers>
-        <QaScorer
+    <qaScorers>
+        <qaScorer
+                name="AnswerFrequency"
+                weight="33">
+        </qaScorer>
+        <qaScorer
+                name="AnswerSimilarityToUserQuestion"
+                weight="33">
+        </qaScorer>
+        <qaScorer
+                name="QuestionSimilarityToUserQuestion"
+                weight="34">
+        </qaScorer>
+        <qaScorer
+                name="SimpleTimeDifference"
+                weight="0">
+        </qaScorer>
+    </qaScorers>
+
+     <!--<qaScorers>
+        <qaScorer
                 name="AnswerFrequency"
                 weight="30">
-        </QaScorer>
-        <QaScorer
+        </qaScorer>
+        <qaScorer
                 name="AnswerSimilarityToUserQuestion"
                 weight="20">
-        </QaScorer>
-        <QaScorer
+        </qaScorer>
+        <qaScorer
                 name="QuestionSimilarityToUserQuestion"
                 weight="40">
-        </QaScorer>
-        <QaScorer
+        </qaScorer>
+        <qaScorer
                 name="SimpleTimeDifference"
                 weight="10">
-        </QaScorer>
-    </QaScorers>
+        </qaScorer>
+    </qaScorers>-->
+
+    <normalizations names = "EnglishLemmatizer, RemoveDiacriticalMarks" />
 
 <!--english or portuguese-->
     <language>english</language>

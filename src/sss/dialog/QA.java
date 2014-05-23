@@ -3,7 +3,7 @@ package sss.dialog;
 import java.util.Arrays;
 import java.util.List;
 
-public class QA {
+public class QA implements Comparable<QA> {
 
     private double score;
     private String question;
@@ -67,5 +67,14 @@ public class QA {
             String answerLemma = getAnswerNormalized();
             return answerListNormalized = Arrays.asList(answerLemma.split("\\s+"));
         }
+    }
+
+
+    @Override
+    public int compareTo(QA qa) {
+        double compareScore = qa.getScore();
+
+        //descending order
+        return (int) Math.signum(compareScore - this.score);
     }
 }

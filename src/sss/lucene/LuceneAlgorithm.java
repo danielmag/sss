@@ -20,6 +20,7 @@ import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.util.Version;
+import sss.main.Main;
 import sss.resources.CorpusReader;
 import sss.resources.SubtitleCorpusReader;
 import sss.texttools.normalizer.Normalizer;
@@ -50,7 +51,7 @@ public class LuceneAlgorithm {
     public LuceneAlgorithm(String pathOfIndex, String language, List<Normalizer> normalizers) throws IOException {
         this.normalizers = normalizers;
         File indexDirec = new File(pathOfIndex);
-        System.out.println(pathOfIndex);
+        Main.printDebug(pathOfIndex);
         try {
             initAnalyzer(language);
             this.index = MMapDirectory.open(indexDirec);

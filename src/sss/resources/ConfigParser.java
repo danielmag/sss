@@ -13,11 +13,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ConfigParser {
 
     private List<String> qaScorers;
+    private List<String> normalizations;
     private String language;
     private String stopWordsLocation;
     private String corpusPath;
@@ -40,7 +43,7 @@ public class ConfigParser {
         Node node;
 
         int total = 0;
-        NodeList nodeList = doc.getElementsByTagName("QaScorers");
+        NodeList nodeList = doc.getElementsByTagName("qaScorers");
         nodeList = nodeList.item(0).getChildNodes();
         this.qaScorers = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -60,6 +63,10 @@ public class ConfigParser {
         if (total != 100) {
             throw new WeightException();
         }
+
+        expr = xpath.compile("//config/normalizations");
+        node = (Node) expr.evaluate(doc, XPathConstants.NODE);
+        normalizations = tokenize(((Element)node).getAttribute("names"));
 
         expr = xpath.compile("//config/corpusPath");
         node = (Node) expr.evaluate(doc, XPathConstants.NODE);
@@ -95,8 +102,16 @@ public class ConfigParser {
 
     }
 
+    private List<String> tokenize(String s) {
+        return Arrays.asList(s.split("(,)(\\s)*"));
+    }
+
     public List<String> getQaScorers() {
         return qaScorers;
+    }
+
+    public List<String> getNormalizations() {
+        return normalizations;
     }
 
     public String getLanguage() {

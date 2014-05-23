@@ -260,7 +260,6 @@ other
 some
 such
 
-no
 nor
 not
 only

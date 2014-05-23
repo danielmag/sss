@@ -31,7 +31,7 @@ public class AnswerSimilarityToUserQuestion extends QaScorer {
         List<String> tokenizedQuestion = Arrays.asList(userQuestion.split("\\s+"));
         List<String> tokenizedQuestionWithoutStopWords = stopWords.getStringListWithoutStopWords(tokenizedQuestion);
         if (!tokenizedQuestionWithoutStopWords.isEmpty()) {
-            this.score(tokenizedQuestionWithoutStopWords, qas);
+            this.score(tokenizedQuestion, tokenizedQuestionWithoutStopWords, qas, stopWords);
         } else {
             this.score(tokenizedQuestion, qas);
         }
@@ -41,6 +41,33 @@ public class AnswerSimilarityToUserQuestion extends QaScorer {
         for (QA qa : qas) {
             JaccardAlgorithm jaccardAlgorithm = new JaccardAlgorithm(new RegularSetIntersection());
             double score = jaccardAlgorithm.distance(tokenizedQuestion, qa.getAnswerListNormalized());
+            if (score >= 0.9 && score <= 1.1) { //yes, i know 1.1 is impossible but doubles scare me
+                score = 0; //ugly but it might work...
+            }
+            else if (score >= 0.4) {
+                score /= 2;
+            }
+            qa.addScore(score*super.getWeight());
+        }
+    }
+
+    private void score(List<String> tokenizedQuestion, List<String> tokenizedQuestionWithoutStopWords, List<QA> qas, StopWords stopWords) {
+        for (QA qa : qas) {
+            JaccardAlgorithm jaccardAlgorithm = new JaccardAlgorithm(new RegularSetIntersection());
+
+            double scoreUntokenized = jaccardAlgorithm.distance(tokenizedQuestion, qa.getAnswerListNormalized());
+
+            double score = jaccardAlgorithm.distance(tokenizedQuestionWithoutStopWords,
+                    stopWords.getStringListWithoutStopWords(qa.getAnswerListNormalized()));
+
+            if (scoreUntokenized >= 0.9 && scoreUntokenized <= 1.1) { //yes, i know 1.1 is impossible but doubles scare me
+                score = 0; //ugly but it might work...
+
+            }
+            else if (scoreUntokenized >= 0.4) {
+                score /= 2;
+            }
+
             qa.addScore(score*super.getWeight());
         }
     }

@@ -41,7 +41,7 @@ public class AnswerFrequency extends QaScorer {
 
     private void scoreQas(List<QA> qas, double[] scores, double max) {
         for (int i = 0; i < scores.length; i++) {
-            double qaScore = (scores[i] / max) * super.getWeight();
+            double qaScore = (max == 0) ? 0 : ((scores[i] / max) * super.getWeight());
             qas.get(i).addScore(qaScore);
         }
     }
