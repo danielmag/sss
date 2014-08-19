@@ -14,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class SubtitleCorpusReader extends CorpusReader {
 
@@ -30,7 +29,7 @@ public class SubtitleCorpusReader extends CorpusReader {
             String answer;
             long internalId = -1;
             int previousDialogId = 0;
-            long totalLines = countLines(file.toPath());
+            long totalLines = 350000000;
             long lineNum = 0;
             while ((line = reader.readLine()) != null) {
                 lineNum++;
@@ -86,11 +85,5 @@ public class SubtitleCorpusReader extends CorpusReader {
 
     private String getSubstringAfterHyphen(String temp) {
         return temp.substring(temp.indexOf('-') + 2, temp.length());
-    }
-
-    private long countLines(Path filePath) throws IOException {
-        try (Stream<String> lines = Files.lines(filePath, Charset.defaultCharset())) {
-            return lines.count();
-        }
     }
 }

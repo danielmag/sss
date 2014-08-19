@@ -18,9 +18,6 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -127,7 +124,7 @@ public class LuceneManager {
     private void addGivenAnswer(QA qa) {
         try {
             FileWriter x = new FileWriter(this.configParser.getLogPath(), true);
-            String localDateTime = LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT));
+            String localDateTime = "now";
             x.write("I - " + qa.getQuestion() + "\n" +
                     "R - " + qa.getAnswer() + "\n" +
                     "T - " + localDateTime + "\n\n");
