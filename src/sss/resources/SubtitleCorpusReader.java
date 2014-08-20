@@ -29,11 +29,12 @@ public class SubtitleCorpusReader extends CorpusReader {
             String answer;
             long internalId = -1;
             int previousDialogId = 0;
-            long totalLines = 350000000;
+            long totalLines = 33022446;
+            long step = totalLines/1000;
             long lineNum = 0;
             while ((line = reader.readLine()) != null) {
                 lineNum++;
-                if ((lineNum % 10000) == 0) {
+                if ((lineNum % step) == 0) {
                     System.out.println(getPercentage(lineNum, totalLines));
                 }
                 if (line.trim().length() == 0) {
@@ -73,6 +74,7 @@ public class SubtitleCorpusReader extends CorpusReader {
                 previousDialogId = dialogId;
                 addDoc(writer, normalizedQuestion, String.valueOf(internalId));
             }
+            System.out.println(lineNum);
             System.out.println();
         }
     }
