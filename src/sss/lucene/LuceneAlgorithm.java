@@ -83,7 +83,6 @@ public class LuceneAlgorithm {
 
         EmbeddedConfiguration db4oConfig = Db4oEmbedded.newConfiguration();
         db4oConfig.file().blockSize(8);
-        db4oConfig.file().readOnly(true);
         db4oConfig.file().lockDatabaseFile(false);
         ObjectContainer db = Db4oEmbedded.openFile(db4oConfig, LuceneManager.DB4OFILENAME);
 
@@ -91,7 +90,8 @@ public class LuceneAlgorithm {
         File[] files = f.listFiles();
         CorpusReader corpusReader = new SubtitleCorpusReader();
         corpusReader.read(writer, db, files, this.normalizers);
-        writer.close();
+        db4oConfig.file().readOnly(true);
+	writer.close();
         db.close();
         return index;
     }
