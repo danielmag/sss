@@ -68,7 +68,6 @@ public class SubtitleCorpusReader extends CorpusReader {
                 previousDialogId = dialogId;
                 addDoc(writer, normalizedQuestion, String.valueOf(uniqueIdentifier));
             }
-            System.out.println(lineNum);
             System.out.println();
         }
     }

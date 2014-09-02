@@ -2,12 +2,14 @@ package sss.lucene;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
+import com.db4o.query.Predicate;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.xml.sax.SAXException;
 import sss.dialog.QA;
 import sss.dialog.SimpleQA;
-import sss.dialog.evaluator.*;
+import sss.dialog.evaluator.QaScorer;
+import sss.dialog.evaluator.QaScorerFactory;
 import sss.main.Main;
 import sss.resources.ConfigParser;
 import sss.texttools.normalizer.Normalizer;
@@ -76,10 +78,14 @@ public class LuceneManager {
         return qas;
     }
 
-    private SimpleQA getSimpleQA(long qaId) {
-        SimpleQA simpleQA = this.db.ext().getByID(qaId);
-        db.activate(simpleQA, 1);
-        return simpleQA;
+    private SimpleQA getSimpleQA(final long qaId) {
+        List<SimpleQA> simpleQAs = this.db.query(new Predicate<SimpleQA>() {
+            public boolean match(SimpleQA simpleQA) {
+                return simpleQA.getUniqueIdentifier() == qaId;
+            }
+        });
+        assert simpleQAs.size() == 1;
+        return simpleQAs.get(0);
     }
 
     private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) throws IOException {
