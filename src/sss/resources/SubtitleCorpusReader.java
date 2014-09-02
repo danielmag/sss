@@ -24,7 +24,6 @@ public class SubtitleCorpusReader extends CorpusReader {
             long uniqueIdentifier = 0;
             int previousDialogId = 0;
             long totalLines = count(file.getCanonicalPath());
-            System.out.println(totalLines);
             long step = totalLines / 1000;
             long lineNum = 0;
             while ((line = reader.readLine()) != null) {
@@ -38,19 +37,19 @@ public class SubtitleCorpusReader extends CorpusReader {
                 String temp = line;
                 assert (temp.startsWith("SubId"));
                 subId = getSubstringAfterHyphen(temp);
-                temp = reader.readLine();
+                temp = reader.readLine(); lineNum++;
                 assert (temp.startsWith("DialogId"));
                 int dialogId = Integer.parseInt(getSubstringAfterHyphen(temp));
 
-                temp = reader.readLine();
+                temp = reader.readLine(); lineNum++;
                 assert (temp.startsWith("Diff"));
                 long diff = Long.parseLong(getSubstringAfterHyphen(temp));
 
-                temp = reader.readLine();
+                temp = reader.readLine(); lineNum++;
                 assert (temp.startsWith("I"));
                 question = getSubstringAfterHyphen(temp); //assumes the corpus does not have empty questions
 
-                temp = reader.readLine();
+                temp = reader.readLine(); lineNum++;
                 assert (temp.startsWith("R"));
                 answer = getSubstringAfterHyphen(temp); //assumes the corpus does not have empty answers
                 answer = answer.trim();
