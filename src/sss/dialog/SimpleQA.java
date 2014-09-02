@@ -3,7 +3,6 @@ package sss.dialog;
 import java.io.Serializable;
 
 public class SimpleQA implements Serializable {
-    private long uniqueIdentifier;
     private long previousQA;
     private String question;
     private String answer;
@@ -11,22 +10,13 @@ public class SimpleQA implements Serializable {
     private String normalizedAnswer;
     private long diff;
 
-    public SimpleQA(long uniqueIdentifier, long previousQA, String question, String answer, String lemmatizedQuestion, String lemmatizedAnswer, long diff) {
-        this.uniqueIdentifier = uniqueIdentifier;
+    public SimpleQA(long previousQA, String question, String answer, String lemmatizedQuestion, String lemmatizedAnswer, long diff) {
         this.previousQA = previousQA;
         this.question = question;
         this.answer = answer;
         this.normalizedAnswer = lemmatizedAnswer;
         this.normalizedQuestion = lemmatizedQuestion;
         this.diff = diff;
-    }
-
-    public long getUniqueIdentifier() {
-        return uniqueIdentifier;
-    }
-
-    public long getPreviousQA() {
-        return previousQA;
     }
 
     public String getQuestion() {
@@ -47,5 +37,9 @@ public class SimpleQA implements Serializable {
 
     public long getDiff() {
         return diff;
+    }
+
+    public long getPreviousQA() {
+        return previousQA;
     }
 }

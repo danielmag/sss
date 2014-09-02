@@ -21,7 +21,7 @@ public class SubtitleCorpusReader extends CorpusReader {
             String subId;
             String question;
             String answer;
-            long uniqueIdentifier = 0;
+            long internalId = -1;
             int previousDialogId = 0;
             long totalLines = count(file.getCanonicalPath());
             long step = totalLines / 1000;
@@ -59,14 +59,14 @@ public class SubtitleCorpusReader extends CorpusReader {
 
                 SimpleQA simpleQA;
                 if (dialogId == previousDialogId + 1) {
-                    simpleQA = new SimpleQA(uniqueIdentifier, uniqueIdentifier - 1, question, answer, normalizedQuestion, normalizedAnswer, diff);
+                    simpleQA = new SimpleQA(internalId, question, answer, normalizedQuestion, normalizedAnswer, diff);
                 } else {
-                    simpleQA = new SimpleQA(uniqueIdentifier, -1, question, answer, normalizedQuestion, normalizedAnswer, diff);
+                    simpleQA = new SimpleQA(-1, question, answer, normalizedQuestion, normalizedAnswer, diff);
                 }
                 db.store(simpleQA);
-                uniqueIdentifier++;
+                internalId = db.ext().getID(simpleQA);
                 previousDialogId = dialogId;
-                addDoc(writer, normalizedQuestion, String.valueOf(uniqueIdentifier));
+                addDoc(writer, normalizedQuestion, String.valueOf(internalId));
             }
             System.out.println();
         }
