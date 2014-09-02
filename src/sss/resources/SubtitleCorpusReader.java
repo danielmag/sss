@@ -5,13 +5,7 @@ import org.apache.lucene.index.IndexWriter;
 import sss.dialog.SimpleQA;
 import sss.texttools.normalizer.Normalizer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.*;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -27,10 +21,11 @@ public class SubtitleCorpusReader extends CorpusReader {
             String subId;
             String question;
             String answer;
-            long internalId = -1;
+            long uniqueIdentifier = 0;
             int previousDialogId = 0;
-            long totalLines = 33022446;
-            long step = totalLines/1000;
+            long totalLines = count(file.getCanonicalPath());
+            System.out.println(totalLines);
+            long step = totalLines / 1000;
             long lineNum = 0;
             while ((line = reader.readLine()) != null) {
                 lineNum++;
@@ -65,14 +60,14 @@ public class SubtitleCorpusReader extends CorpusReader {
 
                 SimpleQA simpleQA;
                 if (dialogId == previousDialogId + 1) {
-                    simpleQA = new SimpleQA(internalId, question, answer, normalizedQuestion, normalizedAnswer, diff);
+                    simpleQA = new SimpleQA(uniqueIdentifier, uniqueIdentifier - 1, question, answer, normalizedQuestion, normalizedAnswer, diff);
                 } else {
-                    simpleQA = new SimpleQA(-1, question, answer, normalizedQuestion, normalizedAnswer, diff);
+                    simpleQA = new SimpleQA(uniqueIdentifier, -1, question, answer, normalizedQuestion, normalizedAnswer, diff);
                 }
                 db.store(simpleQA);
-                internalId = db.ext().getID(simpleQA);
+                uniqueIdentifier++;
                 previousDialogId = dialogId;
-                addDoc(writer, normalizedQuestion, String.valueOf(internalId));
+                addDoc(writer, normalizedQuestion, String.valueOf(uniqueIdentifier));
             }
             System.out.println(lineNum);
             System.out.println();
@@ -87,5 +82,28 @@ public class SubtitleCorpusReader extends CorpusReader {
 
     private String getSubstringAfterHyphen(String temp) {
         return temp.substring(temp.indexOf('-') + 2, temp.length());
+    }
+
+    private int count(String filename) throws IOException {
+        InputStream is = new BufferedInputStream(new FileInputStream(filename));
+        try {
+            byte[] c = new byte[1024];
+            int count = 0;
+            int readChars = 0;
+            boolean endsWithoutNewLine = false;
+            while ((readChars = is.read(c)) != -1) {
+                for (int i = 0; i < readChars; ++i) {
+                    if (c[i] == '\n')
+                        ++count;
+                }
+                endsWithoutNewLine = (c[readChars - 1] != '\n');
+            }
+            if(endsWithoutNewLine) {
+                ++count;
+            }
+            return count;
+        } finally {
+            is.close();
+        }
     }
 }
