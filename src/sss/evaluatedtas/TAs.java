@@ -52,7 +52,7 @@ public class TAs<T extends Answer> {
         }
         if (answer.startsWith("Don") && answer.endsWith("t call me stupid.")) {
             answer = "Dont call me stupid.";
-        }
+        }/*
         if (answer.endsWith(" le escribiste?") && answer.length() == "iQu� le escribiste?".length()) {
             answer = "iQué le escribiste?";
         }
@@ -61,7 +61,7 @@ public class TAs<T extends Answer> {
         }
         if (answer.startsWith("The Caf") && answer.endsWith(", sir? Just a moment, please.")) {
             answer = "The Café, sir? Just a moment, please.";
-        }
+        }*/
         try {
             String ret = ((Evaluated)answers.get(answers.indexOf(new Evaluated(answer, Evaluation.GOOD)))).evalToString();
             return ret;
