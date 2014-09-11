@@ -1,21 +1,30 @@
 package sss.dialog.evaluator;
 
 import sss.dialog.QA;
-import sss.exceptions.dialog.evaluator.WeightException;
+import sss.distance.algorithms.DistanceAlgorithm;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public abstract class QaScorer {
     private double weight; //has to be between 0 and 100
+    private DistanceAlgorithm distanceAlgorithm;
 
-    protected QaScorer(double weight) {
+    protected QaScorer(double weight, DistanceAlgorithm distanceAlgorithm) {
         this.weight = weight;
+        this.distanceAlgorithm = distanceAlgorithm;
     }
 
     public abstract void score(String userQuestion, List<QA> qas);
 
     protected double getWeight() {
-        return weight;
+        return this.weight;
+    }
+
+    public void scoreQA(QA qa, double qaScore) {
+        qa.addScore(qaScore * getWeight());
+    }
+
+    protected DistanceAlgorithm getDistanceAlgorithm() {
+        return distanceAlgorithm;
     }
 }

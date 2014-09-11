@@ -4,25 +4,6 @@
     <qaScorers>
         <qaScorer
                 name="AnswerFrequency"
-                weight="33">
-        </qaScorer>
-        <qaScorer
-                name="AnswerSimilarityToUserQuestion"
-                weight="33">
-        </qaScorer>
-        <qaScorer
-                name="QuestionSimilarityToUserQuestion"
-                weight="34">
-        </qaScorer>
-        <qaScorer
-                name="SimpleTimeDifference"
-                weight="0">
-        </qaScorer>
-    </qaScorers>
-
-     <!--<qaScorers>
-        <qaScorer
-                name="AnswerFrequency"
                 weight="30">
         </qaScorer>
         <qaScorer
@@ -37,11 +18,18 @@
                 name="SimpleTimeDifference"
                 weight="10">
         </qaScorer>
-    </qaScorers>-->
+        <qaScorer
+                name="SimpleConversationContext"
+                weight="0"
+                nPreviousQAs="2">
+        </qaScorer>
+    </qaScorers>
 
-    <normalizations names = "EnglishLemmatizer, RemoveDiacriticalMarks" />
+    <normalizations names="EnglishLemmatizer, RemoveDiacriticalMarks" />
 
-<!--english or portuguese-->
+    <distanceAlgorithm name="Jaccard"/>
+
+    <!--english or portuguese-->
     <language>english</language>
     <stopWordsLocation>./resources/stopwords/english_stop.txt</stopWordsLocation>
 
@@ -51,7 +39,7 @@
 		<hitsPerQuery>200</hitsPerQuery>
     </lucene>
 
-    <!--location of the corpora (check if it is  coherent with the chosen language)-->
+    <!--location of the corpora (check if the corpora is coherent with the chosen language)-->
 	<corpusPath>./resources/corpus/eng</corpusPath>
 	<logPath>./resources/log</logPath>
 

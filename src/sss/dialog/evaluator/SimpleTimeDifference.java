@@ -3,13 +3,14 @@ package sss.dialog.evaluator;
 import l2f.evaluator.distance.algorithms.jaccard.JaccardAlgorithm;
 import l2f.evaluator.distance.algorithms.set.intersection.RegularSetIntersection;
 import sss.dialog.QA;
+import sss.distance.algorithms.DistanceAlgorithm;
 
 import java.util.List;
 
 public class SimpleTimeDifference extends QaScorer {
 
-    public SimpleTimeDifference(double weight) {
-        super(weight);
+    public SimpleTimeDifference(double weight, DistanceAlgorithm distanceAlgorithm) {
+        super(weight, distanceAlgorithm);
     }
 
     @Override
@@ -30,7 +31,7 @@ public class SimpleTimeDifference extends QaScorer {
                 }
             }
             assert(score >= 0);
-            qa.addScore(score*super.getWeight());
+            super.scoreQA(qa, score);
         }
     }
 }

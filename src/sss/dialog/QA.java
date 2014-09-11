@@ -1,26 +1,40 @@
 package sss.dialog;
 
-import java.util.Arrays;
-import java.util.List;
+import com.db4o.Db4oEmbedded;
+import com.db4o.ObjectContainer;
+import sss.exceptions.dialog.NoPreviousQAException;
+import sss.lucene.LuceneManager;
 
-public class QA implements Comparable<QA> {
+import java.text.Format;
+import java.util.*;
 
+public class QA extends BasicQA implements Comparable<QA> {
+
+    private long previousQA;
     private double score;
-    private String question;
-    private String answer;
+    private ArrayList<Double> scores;
     private long diff;
-    private String questionNormalized;
-    private String answerNormalized;
     private List<String> questionListNormalized = null; //I am using null values to allow lazy initialization
     private List<String> answerListNormalized = null;
 
-    public QA(String q, String a, String questionNormalized, String answerNormalized, long diff) {
-        this.question = q;
-        this.answer = a;
-        this.questionNormalized = questionNormalized;
-        this.answerNormalized = answerNormalized;
+    public QA(long previousQA, String q, String a, String questionNormalized, String answerNormalized, long diff) {
+        super(q, a, questionNormalized, answerNormalized);
+        this.previousQA = previousQA;
         this.score = 0.0;
+        this.scores = new ArrayList<>();
         this.diff = diff;
+    }
+
+    public QA getPreviousQA() throws NoPreviousQAException{
+        if (previousQA != -1) {
+            SimpleQA simpleQA = LuceneManager.getSimpleQA(previousQA);
+            return new QA(simpleQA.getPreviousQA(),
+                    simpleQA.getQuestion(), simpleQA.getAnswer(),
+                    simpleQA.getNormalizedQuestion(), simpleQA.getNormalizedAnswer(),
+                    simpleQA.getDiff());
+        } else {
+            throw new NoPreviousQAException(this);
+        }
     }
 
     public double getScore() {
@@ -29,33 +43,18 @@ public class QA implements Comparable<QA> {
 
     public void addScore(double score) {
         this.score += score;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public String getAnswer() {
-        return answer;
+        scores.add(score);
     }
 
     public long getDiff() {
         return diff;
     }
 
-    public String getAnswerNormalized() {
-        return answerNormalized;
-    }
-
-    public String getQuestionNormalized() {
-        return questionNormalized;
-    }
-
     public List<String> getQuestionListNormalized() {
         if (questionListNormalized != null) {
             return questionListNormalized;
         } else {
-            String questionLemma = getQuestionNormalized();
+            String questionLemma = super.getNormalizedQuestion();
             return questionListNormalized = Arrays.asList(questionLemma.split("\\s+"));
         }
     }
@@ -64,11 +63,17 @@ public class QA implements Comparable<QA> {
         if (answerListNormalized != null) {
             return answerListNormalized;
         } else {
-            String answerLemma = getAnswerNormalized();
+            String answerLemma = super.getNormalizedAnswer();
             return answerListNormalized = Arrays.asList(answerLemma.split("\\s+"));
         }
     }
 
+    public void printScores() {
+        for (int i = 0; i < this.scores.size(); i++) {
+            double d = this.scores.get(i);
+            System.out.print(((i+1) + ":" + String.format("%.5f", d) + "\t").replace(",", "."));
+        }
+    }
 
     @Override
     public int compareTo(QA qa) {
@@ -76,5 +81,11 @@ public class QA implements Comparable<QA> {
 
         //descending order
         return (int) Math.signum(compareScore - this.score);
+    }
+
+    private SimpleQA getSimpleQA(long qaId, ObjectContainer db) { //copy pasted from LuceneManager.....
+        SimpleQA simpleQA = db.ext().getByID(qaId);
+        db.activate(simpleQA, 1);
+        return simpleQA;
     }
 }

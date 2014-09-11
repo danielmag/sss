@@ -21,6 +21,7 @@ public class ConfigParser {
 
     private List<String> qaScorers;
     private List<String> normalizations;
+    private String distanceAlgorithm;
     private String language;
     private String stopWordsLocation;
     private String corpusPath;
@@ -52,7 +53,12 @@ public class ConfigParser {
                 Element eElement = (Element) item;
                 String name = eElement.getAttribute("name");
                 String weight = eElement.getAttribute("weight");
-                this.qaScorers.add(name + "," + weight);
+                if (name.equals("SimpleConversationContext")) {
+                    String nPreviousQAs = eElement.getAttribute("nPreviousQAs");
+                    this.qaScorers.add(name + "," + weight + "," + nPreviousQAs);
+                } else {
+                    this.qaScorers.add(name + "," + weight);
+                }
                 int weightInt = Integer.parseInt(weight);
                 if (weightInt < 0 || weightInt > 100) {
                     throw new WeightException();
@@ -67,6 +73,15 @@ public class ConfigParser {
         expr = xpath.compile("//config/normalizations");
         node = (Node) expr.evaluate(doc, XPathConstants.NODE);
         normalizations = tokenize(((Element)node).getAttribute("names"));
+
+        expr = xpath.compile("//config/distanceAlgorithm");
+        node = (Node) expr.evaluate(doc, XPathConstants.NODE);
+        String distanceName = ((Element)node).getAttribute("name");
+        if (distanceName.equals("JaccardOverlap")) {
+            distanceAlgorithm = distanceName + "," + ((Element)node).getAttribute("jaccardWeight");
+        } else {
+            distanceAlgorithm = distanceName;
+        }
 
         expr = xpath.compile("//config/corpusPath");
         node = (Node) expr.evaluate(doc, XPathConstants.NODE);
@@ -144,5 +159,9 @@ public class ConfigParser {
 
     public boolean usePreviouslyCreatedIndex() {
         return usePreviouslyCreatedIndex;
+    }
+
+    public String getDistanceAlgorithm() {
+        return distanceAlgorithm;
     }
 }
