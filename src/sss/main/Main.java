@@ -1,13 +1,8 @@
 package sss.main;
 
-import com.aliasi.tokenizer.PorterStemmerTokenizerFactory;
-import jdk.nashorn.internal.parser.TokenStream;
-import org.apache.lucene.analysis.en.PorterStemFilter;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.tartarus.snowball.ext.PorterStemmer;
 import org.xml.sax.SAXException;
 import sss.lucene.LuceneManager;
-import sss.texttools.normalizer.EnglishLemmatizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;

@@ -10,7 +10,6 @@ import sss.dialog.QA;
 import sss.dialog.SimpleQA;
 import sss.dialog.evaluator.*;
 import sss.distance.algorithms.DistanceAlgorithmFactory;
-import sss.evaluatedtas.Reader;
 import sss.main.Main;
 import sss.resources.ConfigParser;
 import sss.texttools.normalizer.Normalizer;
@@ -21,11 +20,9 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class LuceneManager {
@@ -151,7 +148,7 @@ public class LuceneManager {
         CONVERSATION.add(new BasicQA(question, answer, normalizedQuestion, normalizedAnswer));
         try {
             FileWriter x = new FileWriter(this.configParser.getLogPath(), true);
-            String localDateTime = LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT));
+            String localDateTime = new Date().toString();
             x.write("I - " + question + "\n" +
                     "R - " + answer + "\n" +
                     "T - " + localDateTime + "\n\n");
