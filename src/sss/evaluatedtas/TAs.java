@@ -41,30 +41,7 @@ public class TAs<T extends Answer> {
         if (answer.endsWith(" You don't know") && answer.length() == "? You don't know".length()) {
             answer = "You don't know";
         }
-        if (answer.startsWith("Sit down l") && answer.endsWith("m sorry") && answer.length() == "Sit down l?ve ruined your evening lt was a slip of the tongue, l?m sorry".length()) {
-            answer = "Sit down lÂ´ve ruined your evening lt was a slip of the tongue, lÂ´m sorry";
-        }
-        if (answer.startsWith("Are you trying to tell me if I don") && answer.endsWith("t love you you'll slobber over me like a hog... ... why you gonna do something about it?")) {
-            answer = "Are you trying to tell me if I dont love you you'll slobber over me like a hog... ... why you gonna do something about it?";
-        }
-        if (answer.startsWith("I'm a videograp") && answer.endsWith("her.")) {
-            answer = "I'm a videograpÂµher.";
-        }
-        if (answer.startsWith("Don") && answer.endsWith("t call me stupid.")) {
-            answer = "Dont call me stupid.";
-        }
-        if (answer.endsWith(" le escribiste?") && answer.length() == "iQué le escribiste?".length()) {
-            answer = "iQuÃ© le escribiste?";
-        }
-        if (answer.endsWith(" So where we going?") && answer.length() == "È¥ÄÄÀï? So where we going?".length()) {
-            answer = "Ã\u0088Â¥Ã\u0084Ã\u0084Ã\u0080Ã¯? So where we going?";
-        }
-        if (answer.startsWith("You don't even know who Warren is. Oh, he's my fianc") && answer.endsWith(".")) {
-            answer = "You don't even know who Warren is. Oh, he's my fiancÃ©.";
-        }
-        if (answer.startsWith("The Caf") && answer.endsWith(", sir? Just a moment, please.")) {
-            answer = "The CafÃ©, sir? Just a moment, please.";
-        }
+
         try {
             String ret = ((Evaluated)answers.get(answers.indexOf(new Evaluated(answer, Evaluation.GOOD)))).evalToString();
             return ret;
