@@ -41,8 +41,8 @@ public class QA extends BasicQA implements Comparable<QA> {
         return score;
     }
 
-    public void addScore(double score) {
-        this.score += score;
+    public void addScore(double score, double weight) {
+        this.score += score * weight;
         scores.add(score);
     }
 
@@ -81,11 +81,5 @@ public class QA extends BasicQA implements Comparable<QA> {
 
         //descending order
         return (int) Math.signum(compareScore - this.score);
-    }
-
-    private SimpleQA getSimpleQA(long qaId, ObjectContainer db) { //copy pasted from LuceneManager.....
-        SimpleQA simpleQA = db.ext().getByID(qaId);
-        db.activate(simpleQA, 1);
-        return simpleQA;
     }
 }

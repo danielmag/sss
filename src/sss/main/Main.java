@@ -14,9 +14,9 @@ public class Main {
 
     private static final boolean DEBUG = false;
     private static final boolean TEST = false;
-    private static final boolean LEARN_TO_RANK = false;
-    public static int qid = 29;
     public static final boolean SORT = false;
+    public static final boolean LEARN_TO_RANK = true;
+    public static int qid = 1;
     public static final int N_ANSWERS = 20;
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, XPathExpressionException, SAXException, ParseException, ClassNotFoundException {
@@ -32,7 +32,6 @@ public class Main {
 			"what's your mother's name?",
 			"are you married?",
 			"What do you like?",
-			"what's your name",
 			"are you joking?",
 			"are you a loser",
 			"where are you from",
@@ -43,7 +42,6 @@ public class Main {
 			"I wasn't looking for a ride.  Do you have a car?",
 			"what is the result of one plus one",
 			"how are you?",
-			"who is the leader of facebook",
 			"what is two plus two",
 			"do you have sex",
 			"You can't do much.",
@@ -51,8 +49,6 @@ public class Main {
 			"where are you going",
 			"do you have any brothers or sisters",
 			"what time is it",
-			"who is the president of facebook",
-			"are you married",
 			"are you an idiot",
 			"are you a robot?",
 			"Fine. How are you?",
@@ -103,7 +99,6 @@ public class Main {
 			"why are your wife divorcing you",
 			"who is ceo of microsoft",
 			"fine thanks",
-			"where are you from?",
 			"when do you have sex",
 			"Where is Paris?",
 			"can you help me?",
@@ -113,8 +108,9 @@ public class Main {
         LuceneManager luceneManager = new LuceneManager();
 
         if(Main.LEARN_TO_RANK) {
-            for (int i = 28; i < sssShuffled.length; i++) {
+            for (int i = 0; i < sssShuffled.length; i++) {
                 String query = sssShuffled[i];
+//                System.out.println("T - " + query);
                 luceneManager.getAnswer(query);
                 qid++;
             }
@@ -130,6 +126,9 @@ public class Main {
                     System.out.println("Say something: ");
                     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                     String query = br.readLine();
+                    if (query.isEmpty()) {
+                        continue;
+                    }
                     String answer = luceneManager.getAnswer(query);
                     printDebug("Question: " + query);
                     System.out.println("Answer: " + answer);

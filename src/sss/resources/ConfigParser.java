@@ -77,7 +77,7 @@ public class ConfigParser {
         expr = xpath.compile("//config/distanceAlgorithm");
         node = (Node) expr.evaluate(doc, XPathConstants.NODE);
         String distanceName = ((Element)node).getAttribute("name");
-        if (distanceName.equals("JaccardOverlap")) {
+        if (distanceName.equals("JaccardOverlap") || distanceName.equals("JaccardOverlapBigram")) {
             distanceAlgorithm = distanceName + "," + ((Element)node).getAttribute("jaccardWeight");
         } else {
             distanceAlgorithm = distanceName;

@@ -21,7 +21,7 @@ public abstract class QaScorer {
     }
 
     public void scoreQA(QA qa, double qaScore) {
-        qa.addScore(qaScore * getWeight());
+        qa.addScore(qaScore, getWeight());
     }
 
     protected DistanceAlgorithm getDistanceAlgorithm() {

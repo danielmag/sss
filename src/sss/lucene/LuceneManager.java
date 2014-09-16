@@ -10,6 +10,7 @@ import sss.dialog.QA;
 import sss.dialog.SimpleQA;
 import sss.dialog.evaluator.*;
 import sss.distance.algorithms.DistanceAlgorithmFactory;
+import sss.evaluatedtas.Reader;
 import sss.main.Main;
 import sss.resources.ConfigParser;
 import sss.texttools.normalizer.Normalizer;
@@ -122,25 +123,31 @@ public class LuceneManager {
             }
             return scoredQas.get(0);
         } else {
-            //Reader reader = new Reader("C:\\Users\\Daniel\\Desktop\\Evaluation\\Eu\\eval.txt");
-            double max = 0;
-            QA bestQa = null;
-            for (QA qa : scoredQas) {
-                //String eval = reader.getEvaluatedTAs().getAnswerEvaluation(question, qa.getAnswer());
-                //System.out.print(eval + "\t" + "qid:" + Main.qid + "\t");
-                //qa.printScores();
-                //System.out.println();
-                Main.printDebug("T - " + qa.getQuestion());
-                Main.printDebug("A - " + qa.getAnswer());
-                //System.out.println("\tA - " + qa.getAnswer());
-                Main.printDebug("S - " + qa.getScore());
-                Main.printDebug("");
-                if (qa.getScore() > max) {
-                    max = qa.getScore();
-                    bestQa = qa;
+            if (Main.LEARN_TO_RANK) {
+                Reader reader = new Reader("C:\\Users\\Daniel\\Desktop\\Evaluation\\Eu\\eval.txt");
+                for (QA qa : scoredQas) {
+//                    System.out.println("\tA - " + qa.getAnswer());
+                    String eval = reader.getEvaluatedTAs().getAnswerEvaluation(question, qa.getAnswer());
+                    System.out.print(eval + "\t" + "qid:" + Main.qid + "\t");
+                    qa.printScores();
+                    System.out.println();
                 }
+                return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
+            } else {
+                double max = 0;
+                QA bestQa = null;
+                for (QA qa : scoredQas) {
+                    Main.printDebug("T - " + qa.getQuestion());
+                    Main.printDebug("A - " + qa.getAnswer());
+                    Main.printDebug("S - " + qa.getScore());
+                    Main.printDebug("");
+                    if (qa.getScore() > max) {
+                        max = qa.getScore();
+                        bestQa = qa;
+                    }
+                }
+                return bestQa;
             }
-            return bestQa;
         }
     }
 

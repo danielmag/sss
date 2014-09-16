@@ -14,6 +14,7 @@ public class NormalizerFactory {
             switch(strings[0]) {
                 case "RemoveDiacriticalMarks" : normalizers.add(new SimpleNormalizer()); break;
                 case "EnglishLemmatizer" : normalizers.add(new EnglishLemmatizer()); break;
+                case "PortugueseStemmer" : normalizers.add(new PortugueseStemmer()); break;
                 default: throw new RuntimeException("You have inserted a Normalization that does not exist");
             }
         }

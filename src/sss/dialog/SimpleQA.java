@@ -10,12 +10,12 @@ public class SimpleQA implements Serializable {
     private String normalizedAnswer;
     private long diff;
 
-    public SimpleQA(long previousQA, String question, String answer, String lemmatizedQuestion, String lemmatizedAnswer, long diff) {
+    public SimpleQA(long previousQA, String question, String answer, String normalizedQuestion, String normalizedAnswer, long diff) {
         this.previousQA = previousQA;
         this.question = question;
         this.answer = answer;
-        this.normalizedAnswer = lemmatizedAnswer;
-        this.normalizedQuestion = lemmatizedQuestion;
+        this.normalizedAnswer = normalizedAnswer;
+        this.normalizedQuestion = normalizedQuestion;
         this.diff = diff;
     }
 

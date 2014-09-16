@@ -18,20 +18,20 @@
                 name="SimpleTimeDifference"
                 weight="10">
         </qaScorer>
-        <qaScorer
+     <!--   <qaScorer
                 name="SimpleConversationContext"
                 weight="0"
                 nPreviousQAs="2">
-        </qaScorer>
+        </qaScorer>  -->
     </qaScorers>
 
-    <normalizations names="EnglishLemmatizer, RemoveDiacriticalMarks" />
+    <normalizations names="PortugueseStemmer, RemoveDiacriticalMarks" />
 
-    <distanceAlgorithm name="Jaccard"/>
+    <distanceAlgorithm name="JaccardOverlapBigram" jaccardWeight="0.8"/>
 
     <!--english or portuguese-->
-    <language>english</language>
-    <stopWordsLocation>./resources/stopwords/english_stop.txt</stopWordsLocation>
+    <language>portuguese</language>
+    <stopWordsLocation>./resources/stopwords/portuguese_stop.txt</stopWordsLocation>
 
 	<lucene>
 		<indexPath>./resources/luceneIndexes</indexPath>
@@ -40,8 +40,8 @@
     </lucene>
 
     <!--location of the corpora (check if the corpora is coherent with the chosen language)-->
-	<corpusPath>./resources/corpus/eng</corpusPath>
+	<corpusPath>./resources/corpus/por</corpusPath>
 	<logPath>./resources/log</logPath>
 
-	<noAnswerFoundMsg>I'm sorry, could you rephrase that?</noAnswerFoundMsg>
+	<noAnswerFoundMsg>Peço desculpa, não percebi</noAnswerFoundMsg>
 </config>
