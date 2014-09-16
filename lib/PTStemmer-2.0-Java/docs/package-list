@@ -1,0 +1,6 @@
+ptstemmer
+ptstemmer.exceptions
+ptstemmer.implementations
+ptstemmer.support
+ptstemmer.support.datastructures
+ptstemmer.test
