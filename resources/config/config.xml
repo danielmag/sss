@@ -25,7 +25,7 @@
         </qaScorer>  -->
     </qaScorers>
 
-    <normalizations names="PortugueseStemmer, RemoveDiacriticalMarks" />
+    <normalizations names="RemoveDiacriticalMarks" />
 
     <distanceAlgorithm name="JaccardOverlapBigram" jaccardWeight="0.8"/>
 
