@@ -25,7 +25,7 @@
         </qaScorer>  -->
     </qaScorers>
 
-    <normalizations names="RemoveDiacriticalMarks" />
+    <normalizations names="PortugueseStemmer, RemoveDiacriticalMarks" />
 
     <distanceAlgorithm name="JaccardOverlapBigram" jaccardWeight="0.8"/>
 
@@ -35,7 +35,7 @@
 
 	<lucene>
 		<indexPath>./resources/luceneIndexes</indexPath>
-        <usePreviouslyCreatedIndex>true</usePreviouslyCreatedIndex>
+        <usePreviouslyCreatedIndex>false</usePreviouslyCreatedIndex>
 		<hitsPerQuery>200</hitsPerQuery>
     </lucene>
 
