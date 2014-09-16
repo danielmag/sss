@@ -5,6 +5,7 @@ import com.db4o.ObjectContainer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.xml.sax.SAXException;
+import ptstemmer.exceptions.PTStemmerException;
 import sss.dialog.BasicQA;
 import sss.dialog.QA;
 import sss.dialog.SimpleQA;
@@ -36,7 +37,7 @@ public class LuceneManager {
     private List<QaScorer> qaScorers;
     public static List<BasicQA> CONVERSATION;
 
-    public LuceneManager() throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
+    public LuceneManager() throws IOException, XPathExpressionException, SAXException, ParserConfigurationException, PTStemmerException {
         this.configParser = new ConfigParser("./resources/config/config.xml");
         String pathOfIndex = configParser.getLuceneIndexPath();
         String language = this.configParser.getLanguage();

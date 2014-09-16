@@ -7,17 +7,16 @@ import ptstemmer.implementations.OrengoStemmer;
 import ptstemmer.support.PTStemmerUtilities;
 
 public class PortugueseStemmer extends Normalizer {
+    Stemmer stemmer;
+
+    public PortugueseStemmer() throws PTStemmerException {
+        stemmer = new OrengoStemmer();
+        stemmer.enableCaching(1000);   //Optional
+        stemmer.ignore(PTStemmerUtilities.fileToSet("./resources/namedEntities/namedEntities.txt"));  //Optional
+    }
 
     @Override
     public String normalize(String text) {
-        try {
-            Stemmer stemmer = new OrengoStemmer();
-            stemmer.enableCaching(1000);   //Optional
-            stemmer.ignore(PTStemmerUtilities.fileToSet("./resources/namedEntities/namedEntities.txt"));  //Optional
             return StringUtils.join(stemmer.getPhraseStems(text), " ");
-        } catch (PTStemmerException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

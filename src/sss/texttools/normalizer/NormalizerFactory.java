@@ -1,5 +1,6 @@
 package sss.texttools.normalizer;
 
+import ptstemmer.exceptions.PTStemmerException;
 import sss.dialog.evaluator.*;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.List;
 
 public class NormalizerFactory {
 
-    public List<Normalizer> createNormalizers(List<String> normalizersStrings) {
+    public List<Normalizer> createNormalizers(List<String> normalizersStrings) throws PTStemmerException {
         List<Normalizer> normalizers = new ArrayList<>();
         for (String s : normalizersStrings) {
             String[] strings = s.split(",");
