@@ -12,7 +12,7 @@ public class PortugueseStemmer extends Normalizer {
     public String normalize(String text) {
         try {
             Stemmer stemmer = new OrengoStemmer();
-            stemmer.ignore(PTStemmerUtilities.fileToSet("data/namedEntities.txt"));  //Optional
+            stemmer.ignore(PTStemmerUtilities.fileToSet("namedEntities/namedEntities.txt"));  //Optional
             return StringUtils.join(stemmer.getPhraseStems(text), " ");
         } catch (PTStemmerException e) {
             e.printStackTrace();
