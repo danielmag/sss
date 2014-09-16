@@ -27,7 +27,6 @@ public class SubtitleCorpusReader extends CorpusReader {
             long step = totalLines / 1000;
             long lineNum = 0;
             while ((line = reader.readLine()) != null) {
-                System.out.println("WUT");
                 lineNum++;
                 if ((lineNum % step) == 0) {
                     System.out.println(getPercentage(lineNum, totalLines));
