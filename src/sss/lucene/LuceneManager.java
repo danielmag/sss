@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LuceneManager {
     public static final String ANALYZER_PROPERTIES = "tokenize, ssplit, pos, lemma";
@@ -35,7 +36,7 @@ public class LuceneManager {
     private LuceneAlgorithm luceneAlgorithm;
     private List<Normalizer> normalizers;
     private List<QaScorer> qaScorers;
-    public static List<BasicQA> CONVERSATION;
+    public static CopyOnWriteArrayList<BasicQA> CONVERSATION;
 
     public LuceneManager() throws IOException, XPathExpressionException, SAXException, ParserConfigurationException, PTStemmerException {
         this.configParser = new ConfigParser("./resources/config/config.xml");
@@ -53,7 +54,7 @@ public class LuceneManager {
             luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, pathOfCorpus, language, normalizers);
         }
         this.db = Db4oEmbedded.openFile(LuceneManager.DB4OFILENAME);
-        this.CONVERSATION = new ArrayList<>(); //should be a stack...
+        this.CONVERSATION = new CopyOnWriteArrayList<>(); //should be a stack...
     }
 
     public String getAnswer(String question) throws IOException, ParseException {
@@ -156,7 +157,12 @@ public class LuceneManager {
     }
 
     private void storeDialogue(String answer, String normalizedAnswer, String question, String normalizedQuestion) {
-        CONVERSATION.add(new BasicQA(question, answer, normalizedQuestion, normalizedAnswer));
+        if (CONVERSATION.size() > 100) {
+            CONVERSATION.remove(0);
+            CONVERSATION.add(new BasicQA(question, answer, normalizedQuestion, normalizedAnswer));
+        } else {
+            CONVERSATION.add(new BasicQA(question, answer, normalizedQuestion, normalizedAnswer));
+        }
         try {
             FileWriter x = new FileWriter(this.configParser.getLogPath(), true);
             String localDateTime = new Date().toString();
