@@ -57,6 +57,9 @@ public class LuceneManager {
     }
 
     public String getAnswer(String question) throws IOException, ParseException {
+        if (question == null || question.trim().isEmpty()) {
+            return getNoReplyMessage();
+        }
         String normalizedQuestion = Normalizer.applyNormalizations(question, this.normalizers);
         Main.printDebug("Normalized question: " + normalizedQuestion);
 

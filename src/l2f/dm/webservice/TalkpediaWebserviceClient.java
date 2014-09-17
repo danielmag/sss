@@ -52,15 +52,26 @@ public class TalkpediaWebserviceClient extends WebserviceGenericClient<Talkpedia
 		
 		startTime = System.currentTimeMillis();
 
-		utt = "Olá, como estás?";
+		utt = "";
 		System.out.println("< interact("+utt+")");
 		reply = ws.accessWebservice().interact(utt);
 		System.out.println("> interact("+utt+") - " + reply);
 
 		endTime = System.currentTimeMillis();
 		System.out.println("That took " + (endTime - startTime) + " milliseconds");
-		
-		
+
+
+        startTime = System.currentTimeMillis();
+
+        utt = "olá, como estás?";
+        System.out.println("< interact("+utt+")");
+        reply = ws.accessWebservice().interact(utt);
+        System.out.println("> interact("+utt+") - " + reply);
+
+        endTime = System.currentTimeMillis();
+        System.out.println("That took " + (endTime - startTime) + " milliseconds");
+
+
 //		System.out.println("< isItTrue()");
 //		boolean isItTrue = ws.accessWebservice().isItTrue();
 //		System.out.println("> isItTrue() - " + isItTrue);
