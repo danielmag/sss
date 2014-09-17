@@ -56,7 +56,7 @@ public class LuceneManager {
         this.CONVERSATION = new ArrayList<>(); //should be a stack...
     }
 
-    public String getAnswer(String question) throws IOException, ParseException, ClassNotFoundException {
+    public String getAnswer(String question) throws IOException, ParseException {
         String normalizedQuestion = Normalizer.applyNormalizations(question, this.normalizers);
         Main.printDebug("Normalized question: " + normalizedQuestion);
 
@@ -164,6 +164,10 @@ public class LuceneManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getNoReplyMessage() {
+        return configParser.getNoAnswerFoundMsg();
     }
 
 }
