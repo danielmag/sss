@@ -80,7 +80,7 @@ public class QA extends BasicQA implements Comparable<QA> {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("qid:" + 1 + " ");
+        stringBuilder.append(0 + " " + "qid:" + 1 + " ");
         for (int i = 0; i < this.scores.size(); i++) {
             double d = this.scores.get(i);
             stringBuilder.append(((i + 1) + ":" + String.format("%.5f", d) + " ").replace(",", "."));
