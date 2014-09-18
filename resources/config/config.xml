@@ -29,13 +29,13 @@
         </qaScorer>  -->
     </qaScorers>
 
-    <normalizations names="PortugueseStemmer, RemoveDiacriticalMarks" />
+    <normalizations names="EnglishLemmatizer, RemoveDiacriticalMarks" />
 
     <distanceAlgorithm name="JaccardOverlapBigram" jaccardWeight="0.8"/>
 
     <!--english or portuguese-->
-    <language>portuguese</language>
-    <stopWordsLocation>./resources/stopwords/portuguese_stop.txt</stopWordsLocation>
+    <language>english</language>
+    <stopWordsLocation>./resources/stopwords/english_stop.txt</stopWordsLocation>
 
 	<lucene>
 		<indexPath>./resources/luceneIndexes</indexPath>
@@ -44,8 +44,8 @@
     </lucene>
 
     <!--location of the corpora (check if the corpora is coherent with the chosen language)-->
-	<corpusPath>./resources/corpus/por</corpusPath>
-	<logPath>./resources/log</logPath>
+	<corpusPath>./resources/corpus/eng</corpusPath>
+	<logPath>./resources/eng</logPath>
 
 	<noAnswerFoundMsg>Peço desculpa, não percebi</noAnswerFoundMsg>
 </config>
