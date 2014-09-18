@@ -19,6 +19,8 @@ import java.util.List;
 
 public class ConfigParser {
 
+    private String modelPath;
+    private String evaluationName;
     private List<String> qaScorers;
     private List<String> normalizations;
     private String distanceAlgorithm;
@@ -43,31 +45,42 @@ public class ConfigParser {
         XPathExpression expr;
         Node node;
 
-        int total = 0;
-        NodeList nodeList = doc.getElementsByTagName("qaScorers");
-        nodeList = nodeList.item(0).getChildNodes();
-        this.qaScorers = new ArrayList<>();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node item = nodeList.item(i);
-            if (item.getNodeType() == Node.ELEMENT_NODE) {
-                Element eElement = (Element) item;
-                String name = eElement.getAttribute("name");
-                String weight = eElement.getAttribute("weight");
-                if (name.equals("SimpleConversationContext")) {
-                    String nPreviousQAs = eElement.getAttribute("nPreviousQAs");
-                    this.qaScorers.add(name + "," + weight + "," + nPreviousQAs);
-                } else {
-                    this.qaScorers.add(name + "," + weight);
+        expr = xpath.compile("//config/evaluationChosen");
+        node = (Node) expr.evaluate(doc, XPathConstants.NODE);
+        this.evaluationName = ((Element)node).getAttribute("name");
+        if (evaluationName.equals("l2r")) {
+            expr = xpath.compile("//config/language");
+            node = (Node) expr.evaluate(doc, XPathConstants.NODE);
+            modelPath = node.getTextContent();
+        } else if (evaluationName.equals("qaScorer")) {
+            int total = 0;
+            NodeList nodeList = doc.getElementsByTagName("qaScorers");
+            nodeList = nodeList.item(0).getChildNodes();
+            this.qaScorers = new ArrayList<>();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node item = nodeList.item(i);
+                if (item.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) item;
+                    String name = eElement.getAttribute("name");
+                    String weight = eElement.getAttribute("weight");
+                    if (name.equals("SimpleConversationContext")) {
+                        String nPreviousQAs = eElement.getAttribute("nPreviousQAs");
+                        this.qaScorers.add(name + "," + weight + "," + nPreviousQAs);
+                    } else {
+                        this.qaScorers.add(name + "," + weight);
+                    }
+                    int weightInt = Integer.parseInt(weight);
+                    if (weightInt < 0 || weightInt > 100) {
+                        throw new WeightException();
+                    }
+                    total += weightInt;
                 }
-                int weightInt = Integer.parseInt(weight);
-                if (weightInt < 0 || weightInt > 100) {
-                    throw new WeightException();
-                }
-                total += weightInt;
             }
-        }
-        if (total != 100) {
-            throw new WeightException();
+            if (total != 100) {
+                throw new WeightException();
+            }
+        } else {
+            throw new RuntimeException("evaluation name must be 'l2r' or 'qaScorer'");
         }
 
         expr = xpath.compile("//config/normalizations");
@@ -163,5 +176,13 @@ public class ConfigParser {
 
     public String getDistanceAlgorithm() {
         return distanceAlgorithm;
+    }
+
+    public String getEvaluationName() {
+        return evaluationName;
+    }
+
+    public String getModelPath() {
+        return modelPath;
     }
 }

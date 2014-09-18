@@ -1,7 +1,5 @@
-package sss.dialog.evaluator;
+package sss.dialog.evaluator.qascorer;
 
-import l2f.evaluator.distance.algorithms.jaccard.JaccardAlgorithm;
-import l2f.evaluator.distance.algorithms.set.intersection.RegularSetIntersection;
 import sss.dialog.QA;
 import sss.distance.algorithms.DistanceAlgorithm;
 import sss.texttools.StopWords;

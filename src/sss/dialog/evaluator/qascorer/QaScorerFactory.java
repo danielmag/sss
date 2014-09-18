@@ -1,5 +1,6 @@
-package sss.dialog.evaluator;
+package sss.dialog.evaluator.qascorer;
 
+import sss.dialog.evaluator.Evaluator;
 import sss.distance.algorithms.DistanceAlgorithm;
 import sss.texttools.normalizer.Normalizer;
 
@@ -8,8 +9,8 @@ import java.util.List;
 
 public class QaScorerFactory {
 
-    public List<QaScorer> createQaScorers(List<String> qaScorerStrings, String stopWordsLocation, List<Normalizer> normalizers, DistanceAlgorithm distanceAlgorithm) {
-        List<QaScorer> qaScorers = new ArrayList<>();
+    public List<Evaluator> createQaScorers(List<String> qaScorerStrings, String stopWordsLocation, List<Normalizer> normalizers, DistanceAlgorithm distanceAlgorithm) {
+        List<Evaluator> qaScorers = new ArrayList<>();
         for (String s : qaScorerStrings) {
             String[] strings = s.split(",");
             switch (strings[0]) {

@@ -1,11 +1,12 @@
-package sss.dialog.evaluator;
+package sss.dialog.evaluator.qascorer;
 
 import sss.dialog.QA;
+import sss.dialog.evaluator.Evaluator;
 import sss.distance.algorithms.DistanceAlgorithm;
 
 import java.util.List;
 
-public abstract class QaScorer {
+public abstract class QaScorer implements Evaluator {
     private double weight; //has to be between 0 and 100
     private DistanceAlgorithm distanceAlgorithm;
 

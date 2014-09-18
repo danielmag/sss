@@ -2,14 +2,19 @@ package sss.lucene;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
+import edu.stanford.nlp.parser.metrics.Eval;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.xml.sax.SAXException;
 import ptstemmer.exceptions.PTStemmerException;
 import sss.dialog.BasicQA;
+import sss.dialog.Conversation;
 import sss.dialog.QA;
 import sss.dialog.SimpleQA;
-import sss.dialog.evaluator.*;
+import sss.dialog.evaluator.l2r.L2REvaluator;
+import sss.dialog.evaluator.Evaluator;
+import sss.dialog.evaluator.qascorer.QaScorer;
+import sss.dialog.evaluator.qascorer.QaScorerFactory;
 import sss.distance.algorithms.DistanceAlgorithmFactory;
 import sss.evaluatedtas.Reader;
 import sss.main.Main;
@@ -26,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LuceneManager {
     public static final String ANALYZER_PROPERTIES = "tokenize, ssplit, pos, lemma";
@@ -35,18 +39,32 @@ public class LuceneManager {
     private ConfigParser configParser;
     private LuceneAlgorithm luceneAlgorithm;
     private List<Normalizer> normalizers;
-    private List<QaScorer> qaScorers;
-    public static CopyOnWriteArrayList<BasicQA> CONVERSATION;
+    private List<Evaluator> evaluators;
+    public static Conversation CONVERSATION;
 
     public LuceneManager() throws IOException, XPathExpressionException, SAXException, ParserConfigurationException, PTStemmerException {
         this.configParser = new ConfigParser("./resources/config/config.xml");
         String pathOfIndex = configParser.getLuceneIndexPath();
         String language = this.configParser.getLanguage();
         this.normalizers = (new NormalizerFactory()).createNormalizers(this.configParser.getNormalizations());
-        this.qaScorers = (new QaScorerFactory().createQaScorers(this.configParser.getQaScorers(),
-                this.configParser.getStopWordsLocation(),
-                this.normalizers,
-                new DistanceAlgorithmFactory().getDistanceAlgorithm(this.configParser.getDistanceAlgorithm())));
+        if (configParser.getEvaluationName().equalsIgnoreCase("l2r")) {
+            ArrayList<String> qaScorers = new ArrayList<>();
+            qaScorers.add("AnswerFrequency,0");
+            qaScorers.add("AnswerSimilarityToUserQuestion,0");
+            qaScorers.add("QuestionSimilarityToUserQuestion,0");
+            qaScorers.add("SimpleTimeDifference,0");
+            List<Evaluator> evaluatorList = new ArrayList<>();
+            evaluatorList.add(new L2REvaluator(configParser.getModelPath(), (new QaScorerFactory().createQaScorers(qaScorers,
+                    this.configParser.getStopWordsLocation(),
+                    this.normalizers,
+                    new DistanceAlgorithmFactory().getDistanceAlgorithm(this.configParser.getDistanceAlgorithm())))));
+            this.evaluators = evaluatorList;
+        } else {
+            this.evaluators = (new QaScorerFactory().createQaScorers(this.configParser.getQaScorers(),
+                    this.configParser.getStopWordsLocation(),
+                    this.normalizers,
+                    new DistanceAlgorithmFactory().getDistanceAlgorithm(this.configParser.getDistanceAlgorithm())));
+        }
         if (configParser.usePreviouslyCreatedIndex()) {
             luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, language, normalizers);
         } else {
@@ -54,7 +72,7 @@ public class LuceneManager {
             luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, pathOfCorpus, language, normalizers);
         }
         this.db = Db4oEmbedded.openFile(LuceneManager.DB4OFILENAME);
-        this.CONVERSATION = new CopyOnWriteArrayList<>(); //should be a stack...
+        this.CONVERSATION = new Conversation(); //should be a stack...
     }
 
     public String getAnswer(String question) throws IOException, ParseException {
@@ -65,7 +83,7 @@ public class LuceneManager {
         Main.printDebug("Normalized question: " + normalizedQuestion);
 
         if (!CONVERSATION.isEmpty()) {
-            BasicQA basicQA = CONVERSATION.get(CONVERSATION.size()-1);
+            BasicQA basicQA = CONVERSATION.getLastQA();
             storeDialogue(question, normalizedQuestion, basicQA.getAnswer(), basicQA.getNormalizedAnswer());
         }
 
@@ -106,7 +124,7 @@ public class LuceneManager {
     }
 
     private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) throws IOException {
-        for (QaScorer qaScorer : this.qaScorers) { //TODO deal with named entities
+        for (Evaluator qaScorer : this.evaluators) { //TODO deal with named entities
             qaScorer.score(question, searchedResults);
         }
         return searchedResults;
@@ -157,12 +175,7 @@ public class LuceneManager {
     }
 
     private void storeDialogue(String answer, String normalizedAnswer, String question, String normalizedQuestion) {
-        if (CONVERSATION.size() > 100) {
-            CONVERSATION.remove(0);
-            CONVERSATION.add(new BasicQA(question, answer, normalizedQuestion, normalizedAnswer));
-        } else {
-            CONVERSATION.add(new BasicQA(question, answer, normalizedQuestion, normalizedAnswer));
-        }
+        CONVERSATION.addQA(new BasicQA(question, answer, normalizedQuestion, normalizedAnswer));
         try {
             FileWriter x = new FileWriter(this.configParser.getLogPath(), true);
             String localDateTime = new Date().toString();

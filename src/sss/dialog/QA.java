@@ -2,6 +2,7 @@ package sss.dialog;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
+import org.apache.commons.lang3.StringUtils;
 import sss.exceptions.dialog.NoPreviousQAException;
 import sss.lucene.LuceneManager;
 
@@ -73,6 +74,11 @@ public class QA extends BasicQA implements Comparable<QA> {
             double d = this.scores.get(i);
             System.out.print(((i+1) + ":" + String.format("%.5f", d) + "\t").replace(",", "."));
         }
+    }
+
+    @Override
+    public String toString() {
+        return StringUtils.join(scores, " ");
     }
 
     @Override
