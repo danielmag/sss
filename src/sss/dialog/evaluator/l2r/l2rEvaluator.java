@@ -25,7 +25,7 @@ public class L2REvaluator implements Evaluator {
     public void score(String userQuestion, List<QA> qas) {
         RankerFactory rFact = new RankerFactory();
         Ranker ranker = rFact.loadRanker(modelPath);
-        int[] features = ranker.getFeatures();
+//        int[] features = ranker.getFeatures();
         for (Evaluator qaScorer : evaluators) {
             qaScorer.score(userQuestion, qas);
         }
