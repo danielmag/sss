@@ -60,9 +60,6 @@ public class LearnToRankEvaluator implements Evaluator {
             content = content.trim();
             if (content.length() != 0) {
                 if (content.indexOf("#") != 0) {
-                    if ((Ranker.verbose) && (countEntries % 10000 == 0)) {
-                        System.out.print("\rReading feature file [" + test + "]: " + countRL + "... ");
-                    }
                     DataPoint qp = new DataPoint(content);
                     RankList rl;
                     if (ht.get(qp.getID()) == null) {
@@ -79,10 +76,6 @@ public class LearnToRankEvaluator implements Evaluator {
                     countEntries++;
                 }
             }
-        }
-        if (Ranker.verbose) {
-            System.out.println("\rReading feature file [" + test + "]... [Done.]            ");
-            System.out.println("(" + samples.size() + " ranked lists, " + countEntries + " entries read)");
         }
         return samples;
     }
