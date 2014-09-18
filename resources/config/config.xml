@@ -39,7 +39,7 @@
 
 	<lucene>
 		<indexPath>./resources/luceneIndexes</indexPath>
-        <usePreviouslyCreatedIndex>false</usePreviouslyCreatedIndex>
+        <usePreviouslyCreatedIndex>true</usePreviouslyCreatedIndex>
 		<hitsPerQuery>200</hitsPerQuery>
     </lucene>
 
