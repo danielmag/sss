@@ -4,7 +4,6 @@ import ciir.umass.edu.learning.DataPoint;
 import ciir.umass.edu.learning.RankList;
 import ciir.umass.edu.learning.Ranker;
 import ciir.umass.edu.learning.RankerFactory;
-import ciir.umass.edu.utilities.Sorter;
 import org.apache.commons.lang3.StringUtils;
 import sss.dialog.QA;
 
@@ -32,22 +31,25 @@ public class LearnToRankEvaluator implements Evaluator {
         String stringSamples = StringUtils.join(qas, "\n");
         List<RankList> test = getSamples(stringSamples);
 
-        StringBuilder results = new StringBuilder();
+        String result = new String();
         for (int i = 0; i < test.size(); i++) {
             RankList l = test.get(i);
             double[] scores = new double[l.size()];
             for (int j = 0; j < l.size(); j++) {
                 scores[j] = ranker.eval(l.get(j));
             }
-            int[] idx = Sorter.sort(scores, false);
-            List<Integer> ll = new ArrayList();
-            for (int j = 0; j < idx.length; j++) {
-                ll.add(Integer.valueOf(idx[j]));
-            }
+//            int[] idx = Sorter.sort(scores, false);
+//            List<Integer> ll = new ArrayList();
+//            for (int j = 0; j < idx.length; j++) {
+//                ll.add(Integer.valueOf(idx[j]));
+//            }
             for (int j = 0; j < l.size(); j++) {
-                results.append(scores[j] + (j == l.size() - 1 ? "" : " ") + "\n");
+                if (j == 1) {
+                    System.out.println("MERDA");
+                }
+                result = "" + scores[j] + (j == l.size() - 1 ? "" : " ");
             }
-            System.out.println(results.toString());
+            qas.get(i).addScore(Double.parseDouble(result), 1);
         }
     }
 
