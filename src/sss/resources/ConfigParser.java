@@ -49,7 +49,7 @@ public class ConfigParser {
         node = (Node) expr.evaluate(doc, XPathConstants.NODE);
         this.evaluationName = ((Element)node).getAttribute("name");
         if (evaluationName.equals("l2r")) {
-            expr = xpath.compile("//config/language");
+            expr = xpath.compile("//config/l2rModelPath");
             node = (Node) expr.evaluate(doc, XPathConstants.NODE);
             modelPath = node.getTextContent();
         } else if (evaluationName.equals("qaScorer")) {
