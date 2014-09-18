@@ -72,13 +72,18 @@ public class QA extends BasicQA implements Comparable<QA> {
     public void printScores() {
         for (int i = 0; i < this.scores.size(); i++) {
             double d = this.scores.get(i);
-            System.out.print(((i+1) + ":" + String.format("%.5f", d) + "\t").replace(",", "."));
+            System.out.print(((i+1) + ":" + String.format("%.5f", d) + " ").replace(",", "."));
         }
     }
 
     @Override
     public String toString() {
-        return StringUtils.join(scores, " ");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < this.scores.size(); i++) {
+            double d = this.scores.get(i);
+            stringBuilder.append(((i+1) + ":" + String.format("%.5f", d) + " ").replace(",", "."));
+        }
+        return stringBuilder.toString();
     }
 
     @Override
