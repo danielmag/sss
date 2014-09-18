@@ -5,6 +5,7 @@ import com.db4o.ObjectContainer;
 import org.apache.commons.lang3.StringUtils;
 import sss.exceptions.dialog.NoPreviousQAException;
 import sss.lucene.LuceneManager;
+import sss.main.Main;
 
 import java.text.Format;
 import java.util.*;
@@ -81,7 +82,8 @@ public class QA extends BasicQA implements Comparable<QA> {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < this.scores.size(); i++) {
             double d = this.scores.get(i);
-            stringBuilder.append(((i+1) + ":" + String.format("%.5f", d) + " ").replace(",", "."));
+            stringBuilder.append("qid:" + 1 + " ");
+            stringBuilder.append(((i + 1) + ":" + String.format("%.5f", d) + " ").replace(",", "."));
         }
         return stringBuilder.toString();
     }
