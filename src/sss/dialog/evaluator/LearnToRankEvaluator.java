@@ -1,4 +1,4 @@
-package sss.dialog.evaluator.l2r;
+package sss.dialog.evaluator;
 
 import ciir.umass.edu.learning.DataPoint;
 import ciir.umass.edu.learning.RankList;
@@ -6,17 +6,16 @@ import ciir.umass.edu.learning.Ranker;
 import ciir.umass.edu.learning.RankerFactory;
 import org.apache.commons.lang3.StringUtils;
 import sss.dialog.QA;
-import sss.dialog.evaluator.Evaluator;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-public class L2REvaluator implements Evaluator {
+public class LearnToRankEvaluator implements Evaluator {
     private final List<Evaluator> evaluators;
     private final String modelPath;
 
-    public L2REvaluator(String modelPath, List<Evaluator> evaluators) {
+    public LearnToRankEvaluator(String modelPath, List<Evaluator> evaluators) {
         this.modelPath = modelPath;
         this.evaluators = evaluators;
     }

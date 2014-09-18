@@ -2,7 +2,6 @@ package sss.lucene;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
-import edu.stanford.nlp.parser.metrics.Eval;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.xml.sax.SAXException;
@@ -11,9 +10,8 @@ import sss.dialog.BasicQA;
 import sss.dialog.Conversation;
 import sss.dialog.QA;
 import sss.dialog.SimpleQA;
-import sss.dialog.evaluator.l2r.L2REvaluator;
 import sss.dialog.evaluator.Evaluator;
-import sss.dialog.evaluator.qascorer.QaScorer;
+import sss.dialog.evaluator.LearnToRankEvaluator;
 import sss.dialog.evaluator.qascorer.QaScorerFactory;
 import sss.distance.algorithms.DistanceAlgorithmFactory;
 import sss.evaluatedtas.Reader;
@@ -54,7 +52,7 @@ public class LuceneManager {
             qaScorers.add("QuestionSimilarityToUserQuestion,0");
             qaScorers.add("SimpleTimeDifference,0");
             List<Evaluator> evaluatorList = new ArrayList<>();
-            evaluatorList.add(new L2REvaluator(configParser.getModelPath(), (new QaScorerFactory().createQaScorers(qaScorers,
+            evaluatorList.add(new LearnToRankEvaluator(configParser.getModelPath(), (new QaScorerFactory().createQaScorers(qaScorers,
                     this.configParser.getStopWordsLocation(),
                     this.normalizers,
                     new DistanceAlgorithmFactory().getDistanceAlgorithm(this.configParser.getDistanceAlgorithm())))));
