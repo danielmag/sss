@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 
-    <evaluationChosen name="l2r"/>
+    <evaluationChosen name="qaScorer"/>
 
     <l2rModelPath>./resources/l2r/model.bin</l2rModelPath>
 
@@ -47,5 +47,5 @@
 	<corpusPath>./resources/corpus/eng</corpusPath>
 	<logPath>./resources/eng</logPath>
 
-	<noAnswerFoundMsg>Peço desculpa, não percebi</noAnswerFoundMsg>
+	<noAnswerFoundMsg>I'm sorry, could you rephrase that?</noAnswerFoundMsg>
 </config>

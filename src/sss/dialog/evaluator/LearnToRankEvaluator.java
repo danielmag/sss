@@ -45,7 +45,7 @@ public class LearnToRankEvaluator implements Evaluator {
 //            }
             for (int j = 0; j < l.size(); j++) {
                 if (j == 1) {
-                    System.out.println("MERDA");
+                    //breakpoint;
                 }
                 result = "" + scores[j] + (j == l.size() - 1 ? "" : " ");
             }
