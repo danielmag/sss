@@ -8,11 +8,11 @@
     <qaScorers>
         <qaScorer
                 name="AnswerFrequency"
-                weight="30">
+                weight="20">
         </qaScorer>
         <qaScorer
                 name="AnswerSimilarityToUserQuestion"
-                weight="20">
+                weight="10">
         </qaScorer>
         <qaScorer
                 name="QuestionSimilarityToUserQuestion"
@@ -20,13 +20,13 @@
         </qaScorer>
         <qaScorer
                 name="SimpleTimeDifference"
-                weight="10">
+                weight="5">
         </qaScorer>
-     <!--   <qaScorer
+        <qaScorer
                 name="SimpleConversationContext"
-                weight="0"
+                weight="25"
                 nPreviousQAs="2">
-        </qaScorer>  -->
+        </qaScorer>
     </qaScorers>
 
     <normalizations names="EnglishLemmatizer, RemoveDiacriticalMarks" />
