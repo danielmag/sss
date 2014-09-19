@@ -12,11 +12,11 @@
         </qaScorer>
         <qaScorer
                 name="AnswerSimilarityToUserQuestion"
-                weight="10">
+                weight="5">
         </qaScorer>
         <qaScorer
                 name="QuestionSimilarityToUserQuestion"
-                weight="50">
+                weight="55">
         </qaScorer>
         <qaScorer
                 name="SimpleTimeDifference"
