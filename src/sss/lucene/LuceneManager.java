@@ -76,11 +76,6 @@ public class LuceneManager {
         }
         String normalizedQuestion = Normalizer.applyNormalizations(question, this.normalizers);
         Main.printDebug("Normalized question: " + normalizedQuestion);
-        List<String> normalizedQuestionList = Arrays.asList(normalizedQuestion.split("\\s+"));
-        if (!questionHeadMap.containsKey(normalizedQuestionList.get(0))) {
-            System.out.println(normalizedQuestionList.get(0) + ",");
-            questionHeadMap.put(normalizedQuestionList.get(0), 1);
-        }
 
         if (!CONVERSATION.isEmpty()) {
             BasicQA basicQA = CONVERSATION.getLastQA();
@@ -129,7 +124,7 @@ public class LuceneManager {
         }
         return searchedResults;
     }
-    Map<String, Integer> questionHeadMap = new HashMap<>();
+
     private QA getBestAnswer(String question, List<QA> scoredQas) throws IOException {
         if (scoredQas.size() == 0 || scoredQas == null) {
             return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
@@ -147,13 +142,13 @@ public class LuceneManager {
             return scoredQas.get(0);
         } else {
             if (Main.LEARN_TO_RANK) {
-//                Map<String, Integer> answerHeadMap = new HashMap<>();
-//                for (QA qa : scoredQas) {
-//                    if (!answerHeadMap.containsKey(qa.getAnswerListNormalized().get(0))) {
-//                        System.out.println(qa.getAnswerListNormalized().get(0) + ",");
-//                        answerHeadMap.put(qa.getAnswerListNormalized().get(0), 1);
-//                    }
-//                }
+                Map<String, Integer> answerHeadMap = new HashMap<>();
+                for (QA qa : scoredQas) {
+                    if (!answerHeadMap.containsKey(qa.getAnswerListNormalized().get(0))) {
+                        System.out.println(qa.getAnswerListNormalized().get(0) + ",");
+                        answerHeadMap.put(qa.getAnswerListNormalized().get(0), 1);
+                    }
+                }
                 return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
 //                Reader reader = new Reader("C:\\Users\\Daniel\\Desktop\\Evaluation\\Eu\\eval.txt");
 //                for (QA qa : scoredQas) {
