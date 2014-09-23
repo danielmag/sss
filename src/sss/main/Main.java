@@ -10,6 +10,8 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
 
@@ -19,6 +21,7 @@ public class Main {
     public static final boolean LEARN_TO_RANK = true;
     public static int qid = 1;
     public static final int N_ANSWERS = 20;
+    public static Map<String, Integer> answerHeadMap = new HashMap<>();
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, XPathExpressionException, SAXException, ParseException, ClassNotFoundException, PTStemmerException {
 
@@ -147,6 +150,4 @@ public class Main {
         }
     }
 }
-
-
 

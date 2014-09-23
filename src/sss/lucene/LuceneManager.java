@@ -142,11 +142,10 @@ public class LuceneManager {
             return scoredQas.get(0);
         } else {
             if (Main.LEARN_TO_RANK) {
-                Map<String, Integer> answerHeadMap = new HashMap<>();
                 for (QA qa : scoredQas) {
-                    if (!answerHeadMap.containsKey(qa.getAnswerListNormalized().get(0))) {
+                    if (!Main.answerHeadMap.containsKey(qa.getAnswerListNormalized().get(0))) {
                         System.out.println(qa.getAnswerListNormalized().get(0) + ",");
-                        answerHeadMap.put(qa.getAnswerListNormalized().get(0), 1);
+                        Main.answerHeadMap.put(qa.getAnswerListNormalized().get(0), 1);
                     }
                 }
                 return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
