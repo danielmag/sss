@@ -1,5 +1,10 @@
 package sss.main;
 
+import l2f.nlp.classifier.feature.Feature;
+import l2f.nlp.classifier.featureExtractor.SimpleFeatureExtractor;
+import l2f.nlp.domain.AnalisedSegment;
+import l2f.nlp.tokenizer.TokenizerFactory;
+import l2f.utils.maps.MapCounter;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.xml.sax.SAXException;
 import ptstemmer.exceptions.PTStemmerException;
@@ -10,13 +15,14 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.EnumSet;
 
 public class Main {
 
     private static final boolean DEBUG = false;
     private static final boolean TEST = false;
     public static final boolean SORT = false;
-    public static final boolean LEARN_TO_RANK = false;
+    public static final boolean LEARN_TO_RANK = true;
     public static int qid = 1;
     public static final int N_ANSWERS = 20;
 
@@ -109,12 +115,14 @@ public class Main {
         LuceneManager luceneManager = new LuceneManager();
 
         if(Main.LEARN_TO_RANK) {
+            System.out.print("{");
             for (int i = 0; i < sssShuffled.length; i++) {
                 String query = sssShuffled[i];
 //                System.out.println("T - " + query);
                 luceneManager.getAnswer(query);
                 qid++;
             }
+            System.out.print("}");
         } else {
             if(Main.TEST) {
                 for (int i = 28; i < sssShuffled.length; i++) {

@@ -25,10 +25,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class LuceneManager {
     public static final String ANALYZER_PROPERTIES = "tokenize, ssplit, pos, lemma";
@@ -70,7 +67,7 @@ public class LuceneManager {
             luceneAlgorithm = new LuceneAlgorithm(pathOfIndex, pathOfCorpus, language, normalizers);
         }
         this.db = Db4oEmbedded.openFile(LuceneManager.DB4OFILENAME);
-        this.CONVERSATION = new Conversation(); //should be a stack...
+        this.CONVERSATION = new Conversation();
     }
 
     public String getAnswer(String question) throws IOException, ParseException {
@@ -79,6 +76,11 @@ public class LuceneManager {
         }
         String normalizedQuestion = Normalizer.applyNormalizations(question, this.normalizers);
         Main.printDebug("Normalized question: " + normalizedQuestion);
+        List<String> normalizedQuestionList = Arrays.asList(normalizedQuestion.split("\\s+"));
+        if (!questionHeadMap.containsKey(normalizedQuestionList.get(0))) {
+            System.out.println(normalizedQuestionList.get(0) + ",");
+            questionHeadMap.put(normalizedQuestionList.get(0), 1);
+        }
 
         if (!CONVERSATION.isEmpty()) {
             BasicQA basicQA = CONVERSATION.getLastQA();
@@ -127,7 +129,7 @@ public class LuceneManager {
         }
         return searchedResults;
     }
-
+    Map<String, Integer> questionHeadMap = new HashMap<>();
     private QA getBestAnswer(String question, List<QA> scoredQas) throws IOException {
         if (scoredQas.size() == 0 || scoredQas == null) {
             return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
@@ -145,15 +147,23 @@ public class LuceneManager {
             return scoredQas.get(0);
         } else {
             if (Main.LEARN_TO_RANK) {
-                Reader reader = new Reader("C:\\Users\\Daniel\\Desktop\\Evaluation\\Eu\\eval.txt");
-                for (QA qa : scoredQas) {
-//                    System.out.println("\tA - " + qa.getAnswer());
-                    String eval = reader.getEvaluatedTAs().getAnswerEvaluation(question, qa.getAnswer());
-                    System.out.print(eval + "\t" + "qid:" + Main.qid + "\t");
-                    qa.printScores();
-                    System.out.println();
-                }
+//                Map<String, Integer> answerHeadMap = new HashMap<>();
+//                for (QA qa : scoredQas) {
+//                    if (!answerHeadMap.containsKey(qa.getAnswerListNormalized().get(0))) {
+//                        System.out.println(qa.getAnswerListNormalized().get(0) + ",");
+//                        answerHeadMap.put(qa.getAnswerListNormalized().get(0), 1);
+//                    }
+//                }
                 return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
+//                Reader reader = new Reader("C:\\Users\\Daniel\\Desktop\\Evaluation\\Eu\\eval.txt");
+//                for (QA qa : scoredQas) {
+////                    System.out.println("\tA - " + qa.getAnswer());
+//                    String eval = reader.getEvaluatedTAs().getAnswerEvaluation(question, qa.getAnswer());
+//                    System.out.print(eval + "\t" + "qid:" + Main.qid + "\t");
+//                    qa.printScores();
+//                    System.out.println();
+//                }
+//                return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
             } else {
                 double max = 0;
                 QA bestQa = null;
