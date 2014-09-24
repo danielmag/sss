@@ -11,7 +11,7 @@ import sss.dialog.Conversation;
 import sss.dialog.QA;
 import sss.dialog.SimpleQA;
 import sss.dialog.evaluator.Evaluator;
-import sss.dialog.evaluator.LearnToRankEvaluator;
+import sss.dialog.evaluator.l2r.LearnToRankEvaluator;
 import sss.dialog.evaluator.qascorer.QaScorerFactory;
 import sss.distance.algorithms.DistanceAlgorithmFactory;
 import sss.evaluatedtas.Reader;
@@ -91,7 +91,7 @@ public class LuceneManager {
         Main.printDebug("Scoring the QA's...");
         List<QA> scoredQas = scoreLuceneResults(normalizedQuestion, searchedResults);
 
-        QA answer = getBestAnswer(question, scoredQas);
+        QA answer = getBestAnswer(question, scoredQas, normalizedQuestion);
         storeDialogue(answer.getAnswer(), answer.getNormalizedAnswer(), question, normalizedQuestion);
 
         Main.printDebug("Best answer score: " + answer.getScore());
@@ -125,7 +125,7 @@ public class LuceneManager {
         return searchedResults;
     }
 
-    private QA getBestAnswer(String question, List<QA> scoredQas) throws IOException {
+    private QA getBestAnswer(String question, List<QA> scoredQas, String normalizedQuestion) throws IOException {
         if (scoredQas.size() == 0 || scoredQas == null) {
             return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
         }
@@ -142,22 +142,29 @@ public class LuceneManager {
             return scoredQas.get(0);
         } else {
             if (Main.LEARN_TO_RANK) {
+                Reader reader = new Reader("C:\\Users\\Daniel\\Desktop\\Evaluation\\Eu\\eval.txt");
                 for (QA qa : scoredQas) {
-                    if (!Main.answerHeadMap.containsKey(qa.getAnswerListNormalized().get(0))) {
-                        System.out.println(qa.getAnswerListNormalized().get(0) + ",");
-                        Main.answerHeadMap.put(qa.getAnswerListNormalized().get(0), 1);
+//                    System.out.println("\tA - " + qa.getAnswer());
+                    String eval = reader.getEvaluatedTAs().getAnswerEvaluation(question, qa.getAnswer());
+                    System.out.print(eval + " " + "qid:" + Main.qid + " ");
+                    qa.printScores();
+                    for (String q : Main.questionHeadWords) {
+                        if (q.equalsIgnoreCase(normalizedQuestion.split("\\s+")[0])) {
+                            System.out.print(" 1");
+                        } else {
+                            System.out.print(" 0");
+                        }
                     }
+                    for (String a : Main.answerHeadWords) {
+                        if (a.equalsIgnoreCase(qa.getAnswerListNormalized().get(0))) {
+                            System.out.print(" 1");
+                        } else {
+                            System.out.print(" 0");
+                        }
+                    }
+                    System.out.println();
                 }
                 return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
-//                Reader reader = new Reader("C:\\Users\\Daniel\\Desktop\\Evaluation\\Eu\\eval.txt");
-//                for (QA qa : scoredQas) {
-////                    System.out.println("\tA - " + qa.getAnswer());
-//                    String eval = reader.getEvaluatedTAs().getAnswerEvaluation(question, qa.getAnswer());
-//                    System.out.print(eval + "\t" + "qid:" + Main.qid + "\t");
-//                    qa.printScores();
-//                    System.out.println();
-//                }
-//                return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
             } else {
                 double max = 0;
                 QA bestQa = null;

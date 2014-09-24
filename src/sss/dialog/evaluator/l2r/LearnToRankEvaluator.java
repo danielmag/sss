@@ -1,4 +1,4 @@
-package sss.dialog.evaluator;
+package sss.dialog.evaluator.l2r;
 
 import ciir.umass.edu.learning.DataPoint;
 import ciir.umass.edu.learning.RankList;
@@ -6,6 +6,7 @@ import ciir.umass.edu.learning.Ranker;
 import ciir.umass.edu.learning.RankerFactory;
 import org.apache.commons.lang3.StringUtils;
 import sss.dialog.QA;
+import sss.dialog.evaluator.Evaluator;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
