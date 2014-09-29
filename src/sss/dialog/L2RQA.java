@@ -89,34 +89,38 @@ public class L2RQA extends QA {
             double d = this.scores.get(i);
             stringBuilder.append(((i + 1) + ":" + String.format("%.5f", d) + " ").replace(",", "."));
         }
-        stringBuilder.append(i + ":" + (getAnswerListNormalized().size() > 8 ? 1 : String.format("%.5f", getAnswerListNormalized().size()/8.0 - 1/8.0).replace(",",".")) + " ");
+        stringBuilder.append((i + 1) + ":" + (getAnswerListNormalized().size() > 8 ? 1 : String.format("%.5f", getAnswerListNormalized().size()/8.0 - 1/8.0).replace(",",".")) + " ");
         i++;
-        for (; i < this.questionHeadWordIndex; i++) {
+        int j = 0;
+        for (; j < this.questionHeadWordIndex; j++) {
             stringBuilder.append((i+1) + ":0 ");
+            i++;
         }
         if (questionHeadWordIndex != -1) {
             stringBuilder.append((i+1) + ":1 ");
+            j++;
+        }
+        for (; j < Main.questionHeadWords.length; j++) {
+            stringBuilder.append((i + 1) + ":0 ");
             i++;
         }
-        for (; i < Main.questionHeadWords.length; i++) {
-            stringBuilder.append((i + 1) + ":0 ");
-        }
 
 
-
-        for (; i < this.answerHeadWordIndex; i++) {
+        j = 0;
+        for (; j < this.answerHeadWordIndex; j++) {
             stringBuilder.append((i+1) + ":0 ");
+            i++;
         }
         if (answerHeadWordIndex != -1) {
             stringBuilder.append((i+1) + ":1 ");
             i++;
+            j++;
         }
-        for (; i < Main.answerHeadWords.length; i++) {
+        for (; j < Main.answerHeadWords.length; j++) {
             stringBuilder.append((i + 1) + ":0 ");
+            i++;
         }
         System.out.println(i);
-        System.out.println(questionHeadWordIndex);
-        System.out.println(answerHeadWordIndex);
         return stringBuilder.toString();
     }
 
