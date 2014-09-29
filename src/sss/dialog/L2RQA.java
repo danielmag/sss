@@ -114,7 +114,7 @@ public class L2RQA extends QA {
         for (; i < Main.answerHeadWords.length; i++) {
             stringBuilder.append((i + 1) + ":" + 0 + " ");
         }
-
+        System.out.println(i);
         return stringBuilder.toString();
     }
 
