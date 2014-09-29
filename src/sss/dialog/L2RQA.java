@@ -98,6 +98,7 @@ public class L2RQA extends QA {
         }
         if (questionHeadWordIndex != -1) {
             stringBuilder.append((i+1) + ":1 ");
+            i++;
             j++;
         }
         for (; j < Main.questionHeadWords.length; j++) {
