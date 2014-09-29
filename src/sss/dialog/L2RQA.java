@@ -1,39 +1,38 @@
 package sss.dialog;
 
-import com.db4o.Db4oEmbedded;
-import com.db4o.ObjectContainer;
-import org.apache.commons.lang3.StringUtils;
 import sss.exceptions.dialog.NoPreviousQAException;
 import sss.lucene.LuceneManager;
-import sss.main.Main;
 
-import java.text.Format;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class QA extends BasicQA implements Comparable<QA> {
+public class L2RQA extends QA {
 
     private long previousQA;
+    private int questionHeadWordIndex;
+    private int answerHeadWordIndex;
     private double score;
     private ArrayList<Double> scores;
     private long diff;
     private List<String> questionListNormalized = null; //I am using null values to allow lazy initialization
     private List<String> answerListNormalized = null;
 
-    public QA(long previousQA, String q, String a, String questionNormalized, String answerNormalized, long diff) {
-        super(q, a, questionNormalized, answerNormalized);
-        this.previousQA = previousQA;
+    public L2RQA(long previousQA, String q, String a, String questionNormalized, String answerNormalized, int questionHeadWordIndex, int answerHeadWordIndex, long diff) {
+        super(previousQA, q, a, questionNormalized, answerNormalized, diff);
+        this.questionHeadWordIndex = questionHeadWordIndex;
+        this.answerHeadWordIndex = answerHeadWordIndex;
         this.score = 0.0;
         this.scores = new ArrayList<>();
-        this.diff = diff;
     }
 
-    public QA getPreviousQA() throws NoPreviousQAException{
+    public L2RQA getPreviousQA() throws NoPreviousQAException {
         if (previousQA != -1) {
             SimpleQA simpleQA = LuceneManager.getSimpleQA(previousQA);
-            return new QA(simpleQA.getPreviousQA(),
+            return new L2RQA(simpleQA.getPreviousQA(),
                     simpleQA.getQuestion(), simpleQA.getAnswer(),
                     simpleQA.getNormalizedQuestion(), simpleQA.getNormalizedAnswer(),
-                    simpleQA.getDiff());
+                    questionHeadWordIndex, answerHeadWordIndex, simpleQA.getDiff());
         } else {
             throw new NoPreviousQAException(this);
         }
@@ -91,11 +90,11 @@ public class QA extends BasicQA implements Comparable<QA> {
         return stringBuilder.toString();
     }
 
-    @Override
-    public int compareTo(QA qa) {
-        double compareScore = qa.getScore();
+    public int getQuestionHeadWordIndex() {
+        return questionHeadWordIndex;
+    }
 
-        //descending order
-        return (int) Math.signum(compareScore - this.score);
+    public int getAnswerHeadWordIndex() {
+        return answerHeadWordIndex;
     }
 }

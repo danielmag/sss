@@ -6,10 +6,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.xml.sax.SAXException;
 import ptstemmer.exceptions.PTStemmerException;
-import sss.dialog.BasicQA;
-import sss.dialog.Conversation;
-import sss.dialog.QA;
-import sss.dialog.SimpleQA;
+import sss.dialog.*;
 import sss.dialog.evaluator.Evaluator;
 import sss.dialog.evaluator.l2r.LearnToRankEvaluator;
 import sss.dialog.evaluator.qascorer.QaScorerFactory;
@@ -102,11 +99,12 @@ public class LuceneManager {
         List<QA> qas = new ArrayList<>();
         for (Document d : docList) {
             String qaId = d.get("answer");
-            SimpleQA simpleQA = getSimpleQA(Long.parseLong(qaId));
-            QA qa = new QA(simpleQA.getPreviousQA(),
-                    simpleQA.getQuestion(), simpleQA.getAnswer(),
-                    simpleQA.getNormalizedQuestion(), simpleQA.getNormalizedAnswer(),
-                    simpleQA.getDiff());
+            SimpleL2RQA simpleL2RQA = getSimpleL2RQA(Long.parseLong(qaId));
+            L2RQA qa = new L2RQA(simpleL2RQA.getPreviousQA(),
+                    simpleL2RQA.getQuestion(), simpleL2RQA.getAnswer(),
+                    simpleL2RQA.getNormalizedQuestion(), simpleL2RQA.getNormalizedAnswer(),
+                    simpleL2RQA.getQuestionHeadWordIndex(), simpleL2RQA.getAnswerHeadWordIndex(),
+                    simpleL2RQA.getDiff());
             qas.add(qa);
         }
         return qas;
@@ -116,6 +114,12 @@ public class LuceneManager {
         SimpleQA simpleQA = db.ext().getByID(qaId);
         db.activate(simpleQA, 1);
         return simpleQA;
+    }
+
+    public static SimpleL2RQA getSimpleL2RQA(long qaId) {
+        SimpleL2RQA simpleL2RQA = db.ext().getByID(qaId);
+        db.activate(simpleL2RQA, 1);
+        return simpleL2RQA;
     }
 
     private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) throws IOException {
@@ -148,19 +152,24 @@ public class LuceneManager {
                     String eval = reader.getEvaluatedTAs().getAnswerEvaluation(question, qa.getAnswer());
                     System.out.print(eval + " " + "qid:" + Main.qid + " ");
                     qa.printScores();
+                    int i = 5;
+                    System.out.print(" " + i + ":" + (qa.getAnswerListNormalized().size() > 8 ? 1 : String.format("%.5f", qa.getAnswerListNormalized().size()/8.0 - 1/8.0).replace(",",".")));
+                    i++;
                     for (String q : Main.questionHeadWords) {
                         if (q.equalsIgnoreCase(normalizedQuestion.split("\\s+")[0])) {
-                            System.out.print(" 1");
+                            System.out.print(" " + i + ":1");
                         } else {
-                            System.out.print(" 0");
+                            System.out.print(" " + i + ":0");
                         }
+                        i++;
                     }
                     for (String a : Main.answerHeadWords) {
                         if (a.equalsIgnoreCase(qa.getAnswerListNormalized().get(0))) {
-                            System.out.print(" 1");
+                            System.out.print(" " + i + ":1");
                         } else {
-                            System.out.print(" 0");
+                            System.out.print(" " + i + ":0");
                         }
+                        i++;
                     }
                     System.out.println();
                 }

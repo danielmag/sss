@@ -22,6 +22,7 @@ import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.util.Version;
 import sss.main.Main;
 import sss.resources.CorpusReader;
+import sss.resources.SubtitleCorpusL2RReader;
 import sss.resources.SubtitleCorpusReader;
 import sss.texttools.normalizer.Normalizer;
 
@@ -88,7 +89,7 @@ public class LuceneAlgorithm {
 
         File f = new File(corpusDir);
         File[] files = f.listFiles();
-        CorpusReader corpusReader = new SubtitleCorpusReader();
+        CorpusReader corpusReader = new SubtitleCorpusL2RReader();
         corpusReader.read(writer, db, files, this.normalizers);
         //db4oConfig.file().readOnly(true);
 	    writer.close();
