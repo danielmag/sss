@@ -92,29 +92,31 @@ public class L2RQA extends QA {
         stringBuilder.append(i + ":" + (getAnswerListNormalized().size() > 8 ? 1 : String.format("%.5f", getAnswerListNormalized().size()/8.0 - 1/8.0).replace(",",".")) + " ");
         i++;
         for (; i < this.questionHeadWordIndex; i++) {
-            stringBuilder.append((i+1) + ":" + 0 + " ");
+            stringBuilder.append((i+1) + ":0 ");
         }
         if (questionHeadWordIndex != -1) {
-            stringBuilder.append((i+1) + ":" + 1 + " ");
+            stringBuilder.append((i+1) + ":1 ");
             i++;
         }
         for (; i < Main.questionHeadWords.length; i++) {
-            stringBuilder.append((i + 1) + ":" + 0 + " ");
+            stringBuilder.append((i + 1) + ":0 ");
         }
 
 
 
         for (; i < this.answerHeadWordIndex; i++) {
-            stringBuilder.append((i+1) + ":" + 0 + " ");
+            stringBuilder.append((i+1) + ":0 ");
         }
         if (answerHeadWordIndex != -1) {
-            stringBuilder.append((i+1) + ":" + 1 + " ");
+            stringBuilder.append((i+1) + ":1 ");
             i++;
         }
         for (; i < Main.answerHeadWords.length; i++) {
-            stringBuilder.append((i + 1) + ":" + 0 + " ");
+            stringBuilder.append((i + 1) + ":0 ");
         }
         System.out.println(i);
+        System.out.println(questionHeadWordIndex);
+        System.out.println(answerHeadWordIndex);
         return stringBuilder.toString();
     }
 
