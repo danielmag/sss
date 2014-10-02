@@ -30,6 +30,7 @@ public class LearnToRankEvaluator implements Evaluator {
             qaScorer.score(userQuestion, qas);
         }
         String stringSamples = StringUtils.join(qas, "\n");
+        System.out.println(stringSamples);
         List<RankList> test = getSamples(stringSamples);
 
         String result = new String();
