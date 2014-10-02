@@ -4,6 +4,7 @@ import ciir.umass.edu.learning.DataPoint;
 import ciir.umass.edu.learning.RankList;
 import ciir.umass.edu.learning.Ranker;
 import ciir.umass.edu.learning.RankerFactory;
+import ciir.umass.edu.utilities.Sorter;
 import org.apache.commons.lang3.StringUtils;
 import sss.dialog.QA;
 import sss.dialog.evaluator.Evaluator;
@@ -31,9 +32,6 @@ public class LearnToRankEvaluator implements Evaluator {
         }
         String stringSamples = StringUtils.join(qas, "\n");
         List<RankList> test = getSamples(stringSamples);
-        System.out.println("DELIMITADOR");
-        System.out.println(test.size());
-        System.out.println("DELIMITADOR");
         String result = new String();
         for (int i = 0; i < test.size(); i++) {
             RankList l = test.get(i);
@@ -41,11 +39,14 @@ public class LearnToRankEvaluator implements Evaluator {
             for (int j = 0; j < l.size(); j++) {
                 scores[j] = ranker.eval(l.get(j));
             }
-//            int[] idx = Sorter.sort(scores, false);
-//            List<Integer> ll = new ArrayList();
-//            for (int j = 0; j < idx.length; j++) {
-//                ll.add(Integer.valueOf(idx[j]));
-//            }
+            int[] idx = Sorter.sort(scores, false);
+            List<Integer> ll = new ArrayList();
+            for (int j = 0; j < idx.length; j++) {
+                ll.add(Integer.valueOf(idx[j]));
+            }
+            System.out.println("DELIMITADOR");
+            System.out.println(l.size());
+            System.out.println("DELIMITADOR");
             for (int j = 0; j < l.size(); j++) {
                 if (j == 1) {
                     //breakpoint;
