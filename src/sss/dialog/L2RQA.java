@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class L2RQA extends QA {
+public class L2RQA extends QA implements Comparable<QA> {
 
     private long previousQA;
     private int questionHeadWordIndex;
