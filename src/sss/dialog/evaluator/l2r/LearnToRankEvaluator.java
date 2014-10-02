@@ -29,7 +29,7 @@ public class LearnToRankEvaluator implements Evaluator {
         for (Evaluator qaScorer : evaluators) {
             qaScorer.score(userQuestion, qas);
         }
-        String stringSamples = StringUtils.join(qas, "\n");
+        String stringSamples = StringUtils.join(qas, "#\n");
         List<RankList> test = getSamples(stringSamples);
         System.out.println("DELIMITADOR");
         System.out.println(test.size());
@@ -62,9 +62,6 @@ public class LearnToRankEvaluator implements Evaluator {
         int countRL = 0;
         int countEntries = 0;
         String[] lines = test.split("\n");
-        System.out.println("DELIMITADOR");
-        System.out.println(lines.length);
-        System.out.println("DELIMITADOR");
         for (String content : lines) {
             content = content.trim();
             if (content.length() != 0) {
