@@ -48,9 +48,9 @@ public class LearnToRankEvaluator implements Evaluator {
                 if (j == 1) {
                     System.out.println(l.size());
                 }
-                result = "" + scores[j] + (j == l.size() - 1 ? "" : " ");
+                qas.get(j).addScore(scores[j], 1);
             }
-            qas.get(i).addScore(Double.parseDouble(result), 1);
+
         }
     }
 
