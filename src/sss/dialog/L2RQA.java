@@ -83,7 +83,7 @@ public class L2RQA extends QA implements Comparable<QA> {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(2 + " " + "qid:" + Main.qid++ + " ");
+        stringBuilder.append(2 + " " + "qid:" + 1 + " ");
         int i = 0;
         for (; i < this.scores.size(); i++) {
             double d = this.scores.get(i);
