@@ -124,11 +124,7 @@ public class L2RQA extends QA {
         return stringBuilder.toString();
     }
 
-    public int getQuestionHeadWordIndex() {
-        return questionHeadWordIndex;
-    }
-
-    public int getAnswerHeadWordIndex() {
-        return answerHeadWordIndex;
+    public int compareTo(L2RQA qa) {
+        return super.compareTo(qa);
     }
 }
