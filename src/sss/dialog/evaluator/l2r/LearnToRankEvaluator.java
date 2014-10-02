@@ -62,6 +62,9 @@ public class LearnToRankEvaluator implements Evaluator {
         int countRL = 0;
         int countEntries = 0;
         String[] lines = test.split("\n");
+        System.out.println("DELIMITADOR");
+        System.out.println(lines.length);
+        System.out.println("DELIMITADOR");
         for (String content : lines) {
             content = content.trim();
             if (content.length() != 0) {
