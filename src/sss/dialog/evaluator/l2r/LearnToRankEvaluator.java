@@ -44,12 +44,9 @@ public class LearnToRankEvaluator implements Evaluator {
             for (int j = 0; j < idx.length; j++) {
                 ll.add(Integer.valueOf(idx[j]));
             }
-            System.out.println("DELIMITADOR");
-            System.out.println(l.size());
-            System.out.println("DELIMITADOR");
             for (int j = 0; j < l.size(); j++) {
                 if (j == 1) {
-                    //breakpoint;
+                    System.out.println(l.size());
                 }
                 result = "" + scores[j] + (j == l.size() - 1 ? "" : " ");
             }
