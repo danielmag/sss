@@ -121,7 +121,6 @@ public class L2RQA extends QA {
             stringBuilder.append((i + 1) + ":0 ");
             i++;
         }
-        System.out.println(i);
         return stringBuilder.toString();
     }
 

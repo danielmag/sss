@@ -13,9 +13,9 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final boolean TEST = false;
-    public static final boolean SORT = false;
+    public static final boolean SORT = true;
     public static final boolean LEARN_TO_RANK = false;
     public static int qid = 1;
     public static final int N_ANSWERS = 20;
