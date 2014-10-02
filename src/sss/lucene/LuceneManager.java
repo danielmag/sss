@@ -123,7 +123,7 @@ public class LuceneManager {
     }
 
     private List<QA> scoreLuceneResults(String question, List<QA> searchedResults) throws IOException {
-        for (Evaluator qaScorer : this.evaluators) { //TODO deal with named entities
+        for (Evaluator qaScorer : this.evaluators) {
             qaScorer.score(question, searchedResults);
         }
         return searchedResults;
