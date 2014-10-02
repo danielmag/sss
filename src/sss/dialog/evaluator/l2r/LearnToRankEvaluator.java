@@ -29,7 +29,7 @@ public class LearnToRankEvaluator implements Evaluator {
         for (Evaluator qaScorer : evaluators) {
             qaScorer.score(userQuestion, qas);
         }
-        String stringSamples = StringUtils.join(qas, "#\n");
+        String stringSamples = StringUtils.join(qas, "\n");
         List<RankList> test = getSamples(stringSamples);
         System.out.println("DELIMITADOR");
         System.out.println(test.size());

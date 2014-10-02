@@ -83,7 +83,7 @@ public class L2RQA extends QA {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(2 + " " + "qid:" + 1 + " ");
+        stringBuilder.append(2 + " " + "qid:" + Main.qid++ + " ");
         int i = 0;
         for (; i < this.scores.size(); i++) {
             double d = this.scores.get(i);
