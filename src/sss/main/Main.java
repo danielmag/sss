@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 public class Main {
 
     private static final boolean DEBUG = false;
-    private static final boolean TEST = false;
+    private static final boolean TEST = true;
     public static final boolean SORT = false;
     public static final boolean LEARN_TO_RANK = false;
     public static int qid = 1;
@@ -38,7 +38,12 @@ public class Main {
             }
         } else {
             if (Main.TEST) {
-                for (int i = 28; i < sssShuffled.length; i++) {
+                for (int i = 19; i < 28; i++) {
+                    String query = sssShuffled[i];
+                    System.out.println("T - " + query);
+                    luceneManager.getAnswer(query);
+                }
+                for (int i = 50; i < 78; i++) {
                     String query = sssShuffled[i];
                     System.out.println("T - " + query);
                     luceneManager.getAnswer(query);
