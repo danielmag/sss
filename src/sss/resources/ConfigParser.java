@@ -52,7 +52,7 @@ public class ConfigParser {
             expr = xpath.compile("//config/l2rModelPath");
             node = (Node) expr.evaluate(doc, XPathConstants.NODE);
             modelPath = node.getTextContent();
-        } else if (evaluationName.equals("qaScorer")) {
+        } else if (evaluationName.equals("qaScorers")) {
             int total = 0;
             NodeList nodeList = doc.getElementsByTagName("qaScorers");
             nodeList = nodeList.item(0).getChildNodes();

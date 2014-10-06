@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 
-    <evaluationChosen name="l2r"/>
+    <evaluationChosen name="qaScorers"/>
 
     <l2rModelPath>./resources/l2r/model.bin</l2rModelPath>
 
@@ -40,7 +40,7 @@
 	<lucene>
 		<indexPath>./resources/luceneIndexes</indexPath>
         <usePreviouslyCreatedIndex>true</usePreviouslyCreatedIndex>
-		<hitsPerQuery>200</hitsPerQuery>
+		<hitsPerQuery>20</hitsPerQuery>
     </lucene>
 
     <!--location of the corpora (check if the corpora is coherent with the chosen language)-->
