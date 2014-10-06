@@ -38,12 +38,12 @@ public class Main {
             }
         } else {
             if (Main.TEST) {
-                for (int i = 19; i < 28; i++) {
+                for (int i = 28; i < 29; i++) {
                     String query = sssShuffled[i];
                     System.out.println("T - " + query);
                     System.out.println("A - " + luceneManager.getAnswer(query));
                 }
-                for (int i = 50; i < 78; i++) {
+                for (int i = 78; i < 79; i++) {
                     String query = sssShuffled[i];
                     System.out.println("T - " + query);
                     System.out.println("A - " + luceneManager.getAnswer(query));
