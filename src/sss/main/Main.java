@@ -41,12 +41,12 @@ public class Main {
                 for (int i = 19; i < 28; i++) {
                     String query = sssShuffled[i];
                     System.out.println("T - " + query);
-                    luceneManager.getAnswer(query);
+                    System.out.println("A - " + luceneManager.getAnswer(query));
                 }
                 for (int i = 50; i < 78; i++) {
                     String query = sssShuffled[i];
                     System.out.println("T - " + query);
-                    luceneManager.getAnswer(query);
+                    System.out.println("A - " + luceneManager.getAnswer(query));
                 }
             } else {
 //                String text = "Where um dois tres um";
