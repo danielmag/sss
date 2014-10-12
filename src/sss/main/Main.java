@@ -8,6 +8,7 @@ import sss.lucene.LuceneManager;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -38,15 +39,12 @@ public class Main {
             }
         } else {
             if (Main.TEST) {
-                for (int i = 19; i < 29; i++) {
-                    String query = sssShuffled[i];
-                    System.out.println("T - " + query);
-                    System.out.println("A - " + luceneManager.getAnswer(query));
-                }
-                for (int i = 50; i < 79; i++) {
-                    String query = sssShuffled[i];
-                    System.out.println("T - " + query);
-                    System.out.println("A - " + luceneManager.getAnswer(query));
+                BufferedReader br = new BufferedReader(new FileReader("./en.txt"));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    System.out.println("User Input: " + line);
+                    System.out.println("Answer: " + luceneManager.getAnswer(line));
+                    System.out.println();
                 }
             } else {
 //                String text = "Where um dois tres um";
