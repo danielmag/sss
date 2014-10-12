@@ -8,19 +8,19 @@
     <qaScorers>
         <qaScorer
                 name="AnswerFrequency"
-                weight="33">
+                weight="30">
         </qaScorer>
         <qaScorer
                 name="AnswerSimilarityToUserQuestion"
-                weight="33">
+                weight="5">
         </qaScorer>
         <qaScorer
                 name="QuestionSimilarityToUserQuestion"
-                weight="34">
+                weight="55">
         </qaScorer>
         <qaScorer
                 name="SimpleTimeDifference"
-                weight="0">
+                weight="10">
         </qaScorer>
      <!--   <qaScorer
                 name="SimpleConversationContext"
