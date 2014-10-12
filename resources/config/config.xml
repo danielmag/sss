@@ -40,7 +40,7 @@
 	<lucene>
 		<indexPath>./resources/luceneIndexes</indexPath>
         <usePreviouslyCreatedIndex>true</usePreviouslyCreatedIndex>
-		<hitsPerQuery>20</hitsPerQuery>
+		<hitsPerQuery>200</hitsPerQuery>
     </lucene>
 
     <!--location of the corpora (check if the corpora is coherent with the chosen language)-->
