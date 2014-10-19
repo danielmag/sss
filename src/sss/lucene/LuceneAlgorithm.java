@@ -89,7 +89,7 @@ public class LuceneAlgorithm {
 
         File f = new File(corpusDir);
         File[] files = f.listFiles();
-        CorpusReader corpusReader = new SubtitleCorpusL2RReader();
+        CorpusReader corpusReader = new SubtitleCorpusReader();
         corpusReader.read(writer, db, files, this.normalizers);
         //db4oConfig.file().readOnly(true);
 	    writer.close();
