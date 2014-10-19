@@ -14,10 +14,9 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    private static final boolean DEBUG = false;
-    private static final boolean TEST = true;
-    public static final boolean SORT = false;
+    public static final boolean DEBUG = false;
     public static final boolean LEARN_TO_RANK = false;
+    public static final boolean GET_TAS = false;
     public static int qid = 1;
     public static final int N_ANSWERS = 20;
 
@@ -33,13 +32,17 @@ public class Main {
         if (Main.LEARN_TO_RANK) {
             for (int i = 0; i < sssShuffled.length; i++) {
                 String query = sssShuffled[i];
-//                System.out.println("T - " + query);
                 luceneManager.getAnswer(query);
                 qid++;
             }
+        } else if (Main.GET_TAS) {
+            for (int i = 0; i < sssShuffled.length; i++) {
+                String query = sssShuffled[i];
+                luceneManager.getAnswer(query);
+            }
         } else {
-            if (Main.TEST) {
-                BufferedReader br = new BufferedReader(new FileReader("./en.txt"));
+            if (args.length == 1) {
+                BufferedReader br = new BufferedReader(new FileReader("./" + args[0]));
                 String line;
                 while ((line = br.readLine()) != null) {
                     System.out.println("User Input: " + line);
@@ -47,28 +50,6 @@ public class Main {
                     System.out.println();
                 }
             } else {
-//                String text = "Where um dois tres um";
-//
-//                AnalisedSegment s = new AnalisedSegment(text);
-//
-//                s = TokenizerFactory.getTokenizer(TokenizerFactory.TokenizerType.SIMPLE).tokenize(s);
-//
-//                EnumSet<Feature> features = EnumSet.of(Feature.BINARY_UNIGRAM, Feature.BINARY_BIGRAM, Feature.BINARY_TRIGRAM, Feature.LENGTH, Feature.FIRST_TOKEN, Feature.QUESTION_HEADWORD);
-//
-//                SimpleFeatureExtractor sfe = new SimpleFeatureExtractor(features);
-//
-//                MapCounter counter = sfe.extract(s);
-//
-//                System.out.println(counter.count("#BU#um"));
-//                System.out.println(counter.count("#BB#um dois"));
-//                System.out.println(counter.count("#BT#um dois tres"));
-//                System.out.println(counter.count("#LENGHT##S#"));
-//                System.out.println(counter.count("#LENGHT##L#"));
-//                System.out.println(counter.count("#FIRST_TOKEN#um"));
-//                System.out.println(counter.count("#FIRST_TOKEN#dois"));
-//                System.out.println(counter.count("#HW#um"));
-//                System.out.println(counter.count("#HW#Where"));
-
                 while (true) {
                     System.out.println("Say something: ");
                     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -83,6 +64,7 @@ public class Main {
                 }
             }
         }
+
     }
 
     public static void printDebug(String s) {

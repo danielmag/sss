@@ -80,6 +80,14 @@ public class QA extends BasicQA implements Comparable<QA> {
         }
     }
 
+    public String getScores() {
+        StringBuilder scoresString = new StringBuilder();
+        for (int i = 0; i < this.scores.size(); i++) {
+            scoresString.append("M" + i+1 + " score - " + scores.get(i) + "\n");
+        }
+        return scoresString.toString();
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();

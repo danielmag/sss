@@ -30,7 +30,7 @@ public class ConfigParser {
     private String luceneIndexPath;
     private int hitsPerQuery;
     private String logPath;
-    private String noAnswerFoundMsg;
+    private List<String> noAnswerFoundMsgs;
     private boolean usePreviouslyCreatedIndex;
 
     public ConfigParser(String configfile) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
@@ -126,7 +126,7 @@ public class ConfigParser {
 
         expr = xpath.compile("//config/noAnswerFoundMsg");
         node = (Node) expr.evaluate(doc, XPathConstants.NODE);
-        noAnswerFoundMsg = node.getTextContent();
+        noAnswerFoundMsgs = Arrays.asList(node.getTextContent().split("(,)(\\s)*"));
 
     }
 
@@ -166,8 +166,8 @@ public class ConfigParser {
         return logPath;
     }
 
-    public String getNoAnswerFoundMsg() {
-        return noAnswerFoundMsg;
+    public List<String> getNoAnswerFoundMsgs() {
+        return noAnswerFoundMsgs;
     }
 
     public boolean usePreviouslyCreatedIndex() {

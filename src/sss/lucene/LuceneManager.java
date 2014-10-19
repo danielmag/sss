@@ -99,12 +99,12 @@ public class LuceneManager {
         List<QA> qas = new ArrayList<>();
         for (Document d : docList) {
             String qaId = d.get("answer");
-            SimpleL2RQA simpleL2RQA = getSimpleL2RQA(Long.parseLong(qaId));
-            L2RQA qa = new L2RQA(simpleL2RQA.getPreviousQA(),
-                    simpleL2RQA.getQuestion(), simpleL2RQA.getAnswer(),
-                    simpleL2RQA.getNormalizedQuestion(), simpleL2RQA.getNormalizedAnswer(),
-                    simpleL2RQA.getQuestionHeadWordIndex(), simpleL2RQA.getAnswerHeadWordIndex(),
-                    simpleL2RQA.getDiff());
+            SimpleQA simpleQA = getSimpleQA(Long.parseLong(qaId));
+            QA qa = new QA(simpleQA.getPreviousQA(),
+                    simpleQA.getQuestion(), simpleQA.getAnswer(),
+                    simpleQA.getNormalizedQuestion(), simpleQA.getNormalizedAnswer(),
+                    //simpleL2RQA.getQuestionHeadWordIndex(), simpleL2RQA.getAnswerHeadWordIndex(),
+                    simpleQA.getDiff());
             qas.add(qa);
         }
         return qas;
@@ -131,57 +131,59 @@ public class LuceneManager {
 
     private QA getBestAnswer(String question, List<QA> scoredQas, String normalizedQuestion) throws IOException {
         if (scoredQas.size() == 0 || scoredQas == null) {
-            return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
+            return new QA(0, question, getNoReplyMessage(), null, null, 0);
         }
-        if (Main.SORT) {
+        if (Main.DEBUG) {
             Collections.sort(scoredQas);
             for (int i = 0; i < Main.N_ANSWERS; i++) {
                 QA qa = scoredQas.get(i);
                 Main.printDebug("" + (i + 1));
                 Main.printDebug("T - " + qa.getQuestion());
                 Main.printDebug("A - " + qa.getAnswer());
-                Main.printDebug("S - " + qa.getScore());
+                Main.printDebug(qa.getScores());
+                Main.printDebug("Final Score - " + qa.getScore());
                 Main.printDebug("");
             }
             return scoredQas.get(0);
-        } else {
-            if (Main.LEARN_TO_RANK) {
-                Reader reader = new Reader("C:\\Users\\Daniel\\Desktop\\Evaluation\\Eu\\eval.txt");
-                for (QA qa : scoredQas) {
-//                    System.out.println("\tA - " + qa.getAnswer());
-                    String eval = reader.getEvaluatedTAs().getAnswerEvaluation(question, qa.getAnswer());
-                    System.out.print(eval + " " + "qid:" + Main.qid + " ");
-                    qa.printScores();
-                    int i = 5;
-                    System.out.print(" " + i + ":" + (qa.getAnswerListNormalized().size() > 8 ? 1 : String.format("%.5f", qa.getAnswerListNormalized().size()/8.0 - 1/8.0).replace(",",".")));
+        } else if (Main.LEARN_TO_RANK) {
+            Reader reader = new Reader("C:\\Users\\Daniel\\Desktop\\Evaluation\\Eu\\eval.txt");
+            for (QA qa : scoredQas) {
+                String eval = reader.getEvaluatedTAs().getAnswerEvaluation(question, qa.getAnswer());
+                System.out.print(eval + " " + "qid:" + Main.qid + " ");
+                qa.printScores();
+                int i = 5;
+                System.out.print(" " + i + ":" + (qa.getAnswerListNormalized().size() > 8 ? 1 : String.format("%.5f", qa.getAnswerListNormalized().size() / 8.0 - 1 / 8.0).replace(",", ".")));
+                i++;
+                for (String q : Main.questionHeadWords) {
+                    if (q.equalsIgnoreCase(normalizedQuestion.split("\\s+")[0])) {
+                        System.out.print(" " + i + ":1");
+                    } else {
+                        System.out.print(" " + i + ":0");
+                    }
                     i++;
-                    for (String q : Main.questionHeadWords) {
-                        if (q.equalsIgnoreCase(normalizedQuestion.split("\\s+")[0])) {
-                            System.out.print(" " + i + ":1");
-                        } else {
-                            System.out.print(" " + i + ":0");
-                        }
-                        i++;
-                    }
-                    for (String a : Main.answerHeadWords) {
-                        if (a.equalsIgnoreCase(qa.getAnswerListNormalized().get(0))) {
-                            System.out.print(" " + i + ":1");
-                        } else {
-                            System.out.print(" " + i + ":0");
-                        }
-                        i++;
-                    }
-                    System.out.println();
                 }
-                return new QA(0, question, this.configParser.getNoAnswerFoundMsg(), null, null, 0);
+                for (String a : Main.answerHeadWords) {
+                    if (a.equalsIgnoreCase(qa.getAnswerListNormalized().get(0))) {
+                        System.out.print(" " + i + ":1");
+                    } else {
+                        System.out.print(" " + i + ":0");
+                    }
+                    i++;
+                }
+                System.out.println();
+            }
+            return new QA(0, question, getNoReplyMessage(), null, null, 0);
+        } else {
+            if (Main.GET_TAS) {
+                System.out.println("T - " + question);
+                for (QA qa : scoredQas) {
+                    System.out.println("\tA - " + qa.getAnswer());
+                }
+                return new QA(0, question, getNoReplyMessage(), null, null, 0);
             } else {
                 double max = 0;
                 QA bestQa = null;
                 for (QA qa : scoredQas) {
-                    Main.printDebug("T - " + qa.getQuestion());
-                    Main.printDebug("A - " + qa.getAnswer());
-                    Main.printDebug("S - " + qa.getScore());
-                    Main.printDebug("");
                     if (qa.getScore() > max) {
                         max = qa.getScore();
                         bestQa = qa;
@@ -207,7 +209,8 @@ public class LuceneManager {
     }
 
     public String getNoReplyMessage() {
-        return configParser.getNoAnswerFoundMsg();
+        List<String> strings = configParser.getNoAnswerFoundMsgs();
+        return strings.get(new Random().nextInt(strings.size()));
     }
 
 }
