@@ -47,5 +47,8 @@
 	<corpusPath>./resources/corpus/eng</corpusPath>
 	<logPath>./resources/eng</logPath>
 
-	<noAnswerFoundMsgs>I'm sorry, could you rephrase that?,a,b</noAnswerFoundMsgs>
+	<noAnswerFoundMsgs>
+        "I'm sorry, could you rephrase that?",
+        "I didn't understand"
+    </noAnswerFoundMsgs>
 </config>
