@@ -126,12 +126,12 @@ public class ConfigParser {
 
         expr = xpath.compile("//config/noAnswerFoundMsgs");
         node = (Node) expr.evaluate(doc, XPathConstants.NODE);
-        noAnswerFoundMsgs = Arrays.asList(node.getTextContent().split("(,)(\\s)*"));
+        noAnswerFoundMsgs = Arrays.asList(node.getTextContent().split("\n+"));
 
     }
 
     private List<String> tokenize(String s) {
-        return Arrays.asList(s.split("\n+"));
+        return Arrays.asList(s.split("(,)(\\s)*"));
     }
 
     public List<String> getQaScorers() {
