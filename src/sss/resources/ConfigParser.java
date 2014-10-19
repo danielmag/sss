@@ -131,7 +131,7 @@ public class ConfigParser {
     }
 
     private List<String> tokenize(String s) {
-        return Arrays.asList(s.split("\n*"));
+        return Arrays.asList(s.split("\n+"));
     }
 
     public List<String> getQaScorers() {
