@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
     public static final boolean LEARN_TO_RANK = false;
     public static final boolean GET_TAS = false;
     public static int qid = 1;

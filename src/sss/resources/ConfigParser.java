@@ -124,9 +124,16 @@ public class ConfigParser {
         node = (Node) expr.evaluate(doc, XPathConstants.NODE);
         hitsPerQuery = Integer.parseInt(node.getTextContent());
 
-        expr = xpath.compile("//config/noAnswerFoundMsgs");
-        node = (Node) expr.evaluate(doc, XPathConstants.NODE);
-        noAnswerFoundMsgs = Arrays.asList(node.getTextContent().split("\n+"));
+        NodeList nodeList = doc.getElementsByTagName("noAnswerFoundMsgs");
+        nodeList = nodeList.item(0).getChildNodes();
+        this.noAnswerFoundMsgs = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node item = nodeList.item(i);
+            if (item.getNodeType() == Node.ELEMENT_NODE) {
+                this.noAnswerFoundMsgs.add(item.getNodeValue());
+            }
+        }
+
 
     }
 

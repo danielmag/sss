@@ -48,7 +48,7 @@
 	<logPath>./resources/eng</logPath>
 
 	<noAnswerFoundMsgs>
-        I'm sorry, could you rephrase that?
-        I didn't understand
+        <msg>I'm sorry, could you rephrase that?</msg>
+        <msg>I didn't understand</msg>
     </noAnswerFoundMsgs>
 </config>
