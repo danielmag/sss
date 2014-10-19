@@ -124,8 +124,12 @@ public class ConfigParser {
         node = (Node) expr.evaluate(doc, XPathConstants.NODE);
         hitsPerQuery = Integer.parseInt(node.getTextContent());
 
-        NodeList nodeList = doc.getElementsByTagName("noAnswerFoundMsgs");
-        nodeList = nodeList.item(0).getChildNodes();
+//        NodeList nodeList = doc.getElementsByTagName("noAnswerFoundMsgs");
+//        nodeList = nodeList.item(0).getChildNodes();
+
+        expr = xpath.compile("//config/lucene/hitsPerQuery");
+        node = (Node) expr.evaluate(doc, XPathConstants.NODE);
+        NodeList nodeList = node.getChildNodes();
         this.noAnswerFoundMsgs = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node item = nodeList.item(i);
